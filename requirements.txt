@@ -1,0 +1,5 @@
+Flask==x.x.x
+Flask-Login==x.x.x
+Flask-Migrate==x.x.x
+Flask-SQLAlchemy==x.x.x
+SQLAlchemy==x.x.x

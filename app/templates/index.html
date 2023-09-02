@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to Hotel Geek!</h1>
+    <!-- Display the rooms here -->
+    {% for room in rooms %}
+        <div class="room">
+            <h2>{{ room.name }}</h2>
+            <p>{{ room.description }}</p>
+            <!-- Add more room details here -->
+        </div>
+    {% endfor %}
+{% endblock %}
