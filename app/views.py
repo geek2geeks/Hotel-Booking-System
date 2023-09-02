@@ -2,7 +2,11 @@ from flask import render_template, redirect, url_for, flash, request
 from app import app, db
 from app.models import User, Room  # Assuming you have User and Room models defined in models.py
 from flask_login import login_user, logout_user, login_required, current_user
-# Add other necessary imports
+from app import login_manager  # Make sure the login manager is set up in __init__.py
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def index():
@@ -26,7 +30,9 @@ def register():
 @app.route('/dashboard')
 @login_required
 def dashboard():
-    # Assuming only authenticated users can access the dashboard
+    if not current_user.is_admin:   # Ensure that only admins can access this dashboard
+        flash('Access restricted to admins.', 'danger')
+        return redirect(url_for('index'))
     return render_template('dashboard.html')
 
 @app.route('/admin/add-room', methods=['GET', 'POST'])
