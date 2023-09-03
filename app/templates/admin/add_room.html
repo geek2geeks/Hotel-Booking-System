@@ -4,21 +4,25 @@
 <h2>Add a New Room</h2>
 <form action="/admin/add-room" method="post">
     <div class="form-group">
-        <label for="roomName">Room Name:</label>
-        <input type="text" class="form-control" id="roomName" name="room_name" required>
+        <label for="roomNumber">Room Number:</label>
+        <input type="text" class="form-control" id="roomNumber" name="room_number" required>
     </div>
     <div class="form-group">
         <label for="roomPrice">Room Price:</label>
         <input type="number" class="form-control" id="roomPrice" name="room_price" required>
     </div>
     <div class="form-group">
-        <label>Amenities:</label>
-        <select class="form-control" multiple name="amenities">
-            <option value="wifi">WiFi</option>
-            <option value="tv">TV</option>
-            <option value="ac">Air Conditioning</option>
-            <!-- ... You can add more amenities as options here ... -->
-        </select>
+        <label>Amenities:</label><br>
+        <input type="checkbox" id="wifi" name="amenities" value="wifi">
+        <label for="wifi">WiFi</label><br>
+        
+        <input type="checkbox" id="tv" name="amenities" value="tv">
+        <label for="tv">TV</label><br>
+        
+        <input type="checkbox" id="ac" name="amenities" value="ac">
+        <label for="ac">Air Conditioning</label><br>
+        
+        <!-- ... You can add more amenities as checkboxes here ... -->
     </div>
     <button type="submit" class="btn btn-primary">Add Room</button>
 </form>
