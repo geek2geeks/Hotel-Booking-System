@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Room, Booking
 from datetime import datetime
 from sqlalchemy import or_, and_
+from app import app, db
+from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__)
 
@@ -12,7 +14,7 @@ def index():
     return render_template('index.html', rooms=rooms)
 
 # Search functionality for rooms
-@app.route('/search_rooms', methods=['POST'])
+@main.route('/search_rooms', methods=['POST'])
 def search_rooms():
     room_type = request.form.get('roomType')
     start_date_str = request.form.get('start_date', '').strip()
@@ -49,7 +51,7 @@ def search_rooms():
     return render_template('index.html', rooms=rooms)
 
 # Route for the user's dashboard
-@app.route('/dashboard')
+@main.route('/dashboard')
 @login_required
 def dashboard():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()

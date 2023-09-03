@@ -3,13 +3,22 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from app.models import User
+from .admin import admin
+from .auth import auth
+from .main import main
 
 # Initialize Flask app
 app = Flask(__name__)
 # Application secret key for sessions and cookies
 app.config['SECRET_KEY'] = 'As!101010'
 # Load configuration from instance folder
-app.config.from_object('instance.config.DevConfig')  
+app.config.from_object('instance.config.DevConfig')
+
+# Register blueprints
+app.register_blueprint(admin, url_prefix='/admin')
+app.register_blueprint(auth, url_prefix='/auth')
+app.register_blueprint(main)
 
 # Initialize Flask extensions
 db = SQLAlchemy(app)   # Database operations

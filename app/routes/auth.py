@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import User
 from flask_login import login_user, logout_user, current_user
 from werkzeug.exceptions import BadRequestKeyError
+from app import app, db
+from flask_login import login_required, current_user
 
 auth = Blueprint('auth', __name__)
 
@@ -26,7 +28,7 @@ def login():
     return render_template('login.html')
 
 # Route to register new users
-@app.route('/register', methods=['GET', 'POST'])
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -57,7 +59,7 @@ def register():
     return render_template('register.html')
 
 # Route to log out the user
-@app.route('/logout')
+@auth.route('/logout')
 @login_required
 def logout():
     logout_user()

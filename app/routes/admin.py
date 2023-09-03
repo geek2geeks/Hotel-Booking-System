@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Room, User
 from functools import wraps
 from flask_login import login_required, current_user
+from app import app, db
 
 admin = Blueprint('admin', __name__)
 
@@ -16,14 +17,14 @@ def admin_required(f):
     return decorated_function
 
 # Admin dashboard route with admin decorator applied
-@admin.route('/admin/dashboard')
+@admin.route('/dashboard')
 @login_required
 @admin_required
 def admin_dashboard():
     return render_template('admin/admin_dashboard.html')
 
 # Admin route to add a new room with admin decorator applied
-@app.route('/admin/add-room', methods=['GET', 'POST'])
+@admin.route('/add-room', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def add_room():
@@ -37,7 +38,7 @@ def add_room():
     return render_template('admin/add_room.html')
 
 # Admin route to edit an existing room with admin decorator applied
-@app.route('/admin/edit-room/<int:room_id>', methods=['GET', 'POST'])
+@admin.route('/edit-room/<int:room_id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_room(room_id):
@@ -56,7 +57,7 @@ def edit_room(room_id):
     return render_template('admin/edit_room.html', room=room)
 
 # Admin route to manage users with admin decorator applied
-@app.route('/admin/manage-users')
+@admin.route('/manage-users')
 @login_required
 @admin_required
 def manage_users():
