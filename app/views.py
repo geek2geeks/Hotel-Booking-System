@@ -5,6 +5,7 @@ from app.models import User, Room, Booking
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 from sqlalchemy import or_, and_
+from werkzeug.exceptions import BadRequestKeyError
 
 # User Loader for Flask-Login
 @login_manager.user_loader
@@ -17,21 +18,32 @@ def index():
     rooms = Room.query.all()
     return render_template('index.html', rooms=rooms)
 
-# Login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # Check if the user is already authenticated
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
+    # POST method for form submission
     if request.method == 'POST':
-        user = User.query.filter_by(email=request.form['email']).first()
-        if user and user.check_password(request.form['password']):
-            login_user(user)
-            return redirect(request.args.get('next') or url_for('index'))
-        
-        flash('Invalid email or password', 'danger')
+        try:
+            # Fetch user from the database using the provided email
+            user = User.query.filter_by(email=request.form['email']).first()
 
+            # Check if user exists and the provided password is correct
+            if user and user.check_password(request.form['password']):
+                login_user(user)
+                return redirect(request.args.get('next') or url_for('index'))
+            else:
+                flash('Invalid email or password', 'danger')
+        except BadRequestKeyError:
+            flash('Email field missing.', 'danger')
+        except Exception as e:
+            flash(str(e), 'danger')  # Flash any exception for debugging purposes.
+
+    # Render the login form
     return render_template('login.html')
+
 
 # Registration route
 @app.route('/register', methods=['GET', 'POST'])
@@ -167,6 +179,18 @@ def manage_users():
 
     users = User.query.all()
     return render_template('admin/manage_users.html', users=users)
+
+@app.route('/init_admin')
+def init_admin():
+    if not User.query.filter_by(email='admin@admin.com').first():
+        user = User(username='admin', email='admin@admin.com', is_admin=True)
+        user.set_password('As!101010')
+        db.session.add(user)
+        db.session.commit()
+        flash('Admin initialized!', 'success')
+    else:
+        flash('Admin already exists!', 'danger')
+    return redirect(url_for('index'))
 
 # Logout route
 @app.route('/logout')

@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 
 # Initialize Flask app
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'As!101010'
 app.config.from_object('instance.config.DevConfig')
 
 # Initialize Flask extensions

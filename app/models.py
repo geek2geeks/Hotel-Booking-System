@@ -14,34 +14,47 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False)  # Added is_admin column
     reservations = db.relationship('Reservation', backref='guest', lazy=True)
+
+    @property
+    def is_active(self):
+        # Here, you can add more complex logic if needed, 
+        # like checking if a user is banned, etc.
+        return True
+
     def set_password(self, password):
         self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
+
 
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     room_number = db.Column(db.String(50), nullable=False)
     type = db.Column(db.String(50), nullable=False)
-    status = db.Column(db.String(50), default='available')
     price = db.Column(db.Float, nullable=False)
-    amenities = db.relationship('Amenity', secondary=room_amenities, backref='rooms')  # Many-to-many relationship
-    reservations = db.relationship('Reservation', backref='room', lazy=True)
+    amenities = db.relationship('Amenity', secondary=room_amenities, backref='rooms')
+    bookings = db.relationship('Booking', backref='room', lazy=True)  # changed from reservations to bookings
+    
+    @property
+    def status(self):
+        # If there's an active booking, set the status to occupied, else available
+        for booking in self.bookings:
+            if booking.start_date <= datetime.utcnow() <= booking.end_date:
+                return 'occupied'
+        return 'available'
 
-class Amenity(db.Model):  # New Model for Amenity
+class Amenity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
 
-class Reservation(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    check_in_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    check_out_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
-
-
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    room_id = db.Column(db.Integer, db.ForeignKey('room.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
     start_date = db.Column(db.DateTime, default=datetime.utcnow)
     end_date = db.Column(db.DateTime, default=datetime.utcnow)
-    # ... any other fields
+
+
+
