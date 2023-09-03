@@ -1,7 +1,11 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-<h2>Admin Dashboard</h2>
-<p>Welcome, Admin!</p>
-<!-- Other dashboard content like room management controls, user lists, etc. -->
+<h2>Welcome, {{ current_user.username }}</h2>
+<p>Here are your upcoming bookings:</p>
+<!-- Sample code for displaying bookings, adjust as per your data structure -->
+{% for booking in bookings %}
+    <p>Booking ID: {{ booking.id }} for room {{ booking.room_name }} on {{ booking.date }}.</p>
+{% endfor %}
+<a href="/new-booking" class="btn btn-primary">Book a New Room</a>
 {% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Edit Room</h2>
+<form action="/admin/edit-room/{{ room.id }}" method="post">
+    <div class="form-group">
+        <label for="roomName">Room Name:</label>
+        <input type="text" class="form-control" id="roomName" name="room_name" value="{{ room.name }}" required>
+    </div>
+    <div class="form-group">
+        <label for="roomPrice">Room Price:</label>
+        <input type="number" class="form-control" id="roomPrice" name="room_price" value="{{ room.price }}" required>
+    </div>
+    <div class="form-group">
+        <label>Amenities:</label>
+        <select class="form-control" multiple name="amenities">
+            <option value="wifi" {% if "wifi" in room.amenities %}selected{% endif %}>WiFi</option>
+            <option value="tv" {% if "tv" in room.amenities %}selected{% endif %}>TV</option>
+            <option value="ac" {% if "ac" in room.amenities %}selected{% endif %}>Air Conditioning</option>
+            <!-- ... Additional amenities options ... -->
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+{% endblock %}
