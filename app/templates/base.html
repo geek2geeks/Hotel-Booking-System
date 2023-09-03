@@ -2,27 +2,37 @@
 <html lang="en">
 
 <head>
+    <!-- Meta tags for character set and responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page title -->
     <title>Hotel Reservation System</title>
-    <!-- Bootstrap CSS -->
+
+    <!-- Bootstrap CSS for styling -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- Navigation Bar -->
+    <!-- Start of Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <!-- Brand/logo -->
         <a class="navbar-brand" href="/">Hotel Geek</a>
+
+        <!-- Toggler for mobile view navigation -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
+        <!-- Navigation items -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/">Rooms</a>
                 </li>
-                <!-- Assuming a 'current_user' object with 'is_authenticated' and 'is_admin' properties -->
+
+                <!-- Conditional items depending on user authentication and roles -->
                 {% if current_user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="/dashboard">Dashboard</a>
@@ -46,6 +56,8 @@
             </ul>
         </div>
     </nav>
+
+    <!-- Flash messages container -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -57,23 +69,26 @@
             {% endif %}
         {% endwith %}
     </div>
-    <!-- Content will be inserted here from child templates -->
+
+    <!-- Main content area where child templates will render their content -->
     <div class="container mt-4">
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- Footer Section -->
+    <!-- Footer section -->
     <footer class="bg-light text-center text-lg-start mt-4">
         <div class="container p-4">
             <p>&copy; 2023 Hotel Geek. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Optional Bootstrap JS and jQuery, for added functionality (e.g., navbar toggle) -->
+    <!-- JS libraries for Bootstrap and other optional functionality -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- jQuery UI styles and scripts for datepicker functionality -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
