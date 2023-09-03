@@ -1,6 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h2>Search Rooms</h2>
+<form action="{{ url_for('search_rooms') }}" method="post" class="mb-4">
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" name="search_term" placeholder="Search rooms..." class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="start_date" name="start_date" placeholder="Start Date" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="text" id="end_date" name="end_date" placeholder="End Date" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="submit" value="Search" class="btn btn-primary">
+        </div>
+    </div>
+</form>
+
+<script>
+    $(function() {
+        $("#start_date").datepicker();
+        $("#end_date").datepicker();
+    });
+</script>
+
 <h2>Available Rooms</h2>
 <div class="row">
     {% for room in rooms %}

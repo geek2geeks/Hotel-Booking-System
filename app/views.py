@@ -3,6 +3,9 @@ from app import app, db
 from app.models import User, Room, Booking
 from flask_login import login_user, logout_user, login_required, current_user
 from app import login_manager 
+from datetime import datetime
+from sqlalchemy import or_, and_
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -30,18 +33,66 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+    
     if request.method == 'POST':
-        email = request.form['email']
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check if email or password fields are empty
+        if not email or not password:
+            flash('Both email and password are required!', 'danger')
+            return redirect(url_for('register'))
+
         if User.query.filter_by(email=email).first():
             flash('Email address already registered', 'danger')
             return redirect(url_for('register'))
+        
         user = User(email=email)
-        user.set_password(request.form['password'])
+        user.set_password(password)
+        
         db.session.add(user)
         db.session.commit()
+        
         login_user(user)
+        
+        flash('Registration successful. Welcome!', 'success')
         return redirect(url_for('index'))
+
     return render_template('register.html')
+
+@app.route('/search_rooms', methods=['POST'])
+def search_rooms():
+    search_term = request.form.get('search_term', '').strip()
+    start_date_str = request.form.get('start_date', '').strip()
+    end_date_str = request.form.get('end_date', '').strip()
+
+    try:
+        start_date = datetime.strptime(start_date_str, '%m/%d/%Y') if start_date_str else None
+        end_date = datetime.strptime(end_date_str, '%m/%d/%Y') if end_date_str else None
+    except ValueError:
+        flash('Invalid date format. Please select valid dates.', 'danger')
+        return redirect(url_for('index'))
+
+    query = Room.query
+
+    if search_term:
+        query = query.filter(Room.name.ilike(f'%{search_term}%'))
+
+    if start_date and end_date:
+        # Filter out rooms that are already booked within the date range
+        subquery = Booking.query.filter(
+            and_(
+                Booking.start_date < end_date,
+                Booking.end_date > start_date
+            )
+        ).with_entities(Booking.room_id).subquery()
+
+        query = query.filter(~Room.id.in_(subquery))
+
+    rooms = query.all()
+
+    return render_template('index.html', rooms=rooms)``
+
 
 @app.route('/dashboard')
 @login_required

@@ -1,5 +1,6 @@
 from datetime import datetime
-from app import db
+from app import db, bcrypt
+
 
 room_amenities = db.Table('room_amenities',
     db.Column('room_id', db.Integer, db.ForeignKey('room.id')),
@@ -13,6 +14,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     is_admin = db.Column(db.Boolean, default=False)  # Added is_admin column
     reservations = db.relationship('Reservation', backref='guest', lazy=True)
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
