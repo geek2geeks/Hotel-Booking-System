@@ -1,8 +1,11 @@
+# File: Hotel-Booking-System/app/routes/main.py
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Room, Booking
 from datetime import datetime
 from sqlalchemy import or_, and_
-from app import app, db
+from flask import current_app as app
+from app.extensions import db
 from flask_login import login_required, current_user
 
 main = Blueprint('main', __name__)
@@ -11,6 +14,7 @@ main = Blueprint('main', __name__)
 @main.route('/')
 def index():
     rooms = Room.query.all()
+    print(app.template_folder)
     return render_template('index.html', rooms=rooms)
 
 # Search functionality for rooms

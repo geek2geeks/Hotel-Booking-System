@@ -1,18 +1,20 @@
 # models.py
+# app/models.py
+
 from datetime import datetime
-from app.routes import db, bcrypt
+from app.extensions import db, bcrypt  # Updated the import to use app.extensions
 from enum import Enum
 from flask_login import UserMixin
 
-# Enum to represent room status
+# Enum to represent the status of the room (e.g., occupied or available)
 class RoomStatus(Enum):
     OCCUPIED = 'occupied'
     AVAILABLE = 'available'
 
-# Association table to establish many-to-many relationship between Room and Amenity
+# Association table to represent the many-to-many relationship between Room and Amenity
 room_amenities = db.Table('room_amenities',
-    db.Column('room_id', db.Integer, db.ForeignKey('room.id')),  # Foreign key for room
-    db.Column('amenity_id', db.Integer, db.ForeignKey('amenity.id'))  # Foreign key for amenity
+    db.Column('room_id', db.Integer, db.ForeignKey('room.id')),  # Foreign key referring to room
+    db.Column('amenity_id', db.Integer, db.ForeignKey('amenity.id'))  # Foreign key referring to amenity
 )
 
 # Model to represent a User
@@ -26,7 +28,7 @@ class User(UserMixin, db.Model):
 
     @property
     def is_active(self):
-        # This can be used to check if a user is active, further logic can be added as needed
+        # This can be extended to check the user's active status
         return True
 
     def set_password(self, password):

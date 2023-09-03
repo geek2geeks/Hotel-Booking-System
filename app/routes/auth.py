@@ -1,9 +1,9 @@
+# File: Hotel-Booking-System/app/routes/auth.py
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import User
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.exceptions import BadRequestKeyError
-from app import app, db
-from flask_login import login_required, current_user
+from app.extensions import db
 
 auth = Blueprint('auth', __name__)
 
@@ -14,14 +14,20 @@ def login():
 
     if request.method == 'POST':
         try:
-            user = User.query.filter_by(email=request.form['email']).first()
-            if user and user.check_password(request.form['password']):
+            email = request.form.get('email', default=None)  # Using default value as None
+            password = request.form.get('password', default=None)
+            
+            if not email:
+                raise BadRequestKeyError('Email field missing.')
+
+            user = User.query.filter_by(email=email).first()
+            if user and user.check_password(password):
                 login_user(user)
                 return redirect(request.args.get('next') or url_for('index'))
             else:
                 flash('Invalid email or password', 'danger')
-        except BadRequestKeyError:
-            flash('Email field missing.', 'danger')
+        except BadRequestKeyError as e:
+            flash(str(e), 'danger')
         except Exception as e:
             flash(str(e), 'danger')
 

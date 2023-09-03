@@ -1,8 +1,11 @@
+# File: app/routes/admin.py
+
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Room, User
 from functools import wraps
 from flask_login import login_required, current_user
-from app import app, db
+from flask import current_app as app
+from app.extensions import db
 
 admin = Blueprint('admin', __name__)
 
@@ -33,7 +36,7 @@ def add_room():
         db.session.add(room)
         db.session.commit()
         flash('Room added successfully!', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin.admin_dashboard'))
 
     return render_template('admin/add_room.html')
 
@@ -45,14 +48,14 @@ def edit_room(room_id):
     room = Room.query.get(room_id)
     if not room:
         flash('Room not found.', 'danger')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin.admin_dashboard'))
 
     if request.method == 'POST':
         room.name = request.form['name']
         room.description = request.form['description']
         db.session.commit()
         flash('Room edited successfully!', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin.admin_dashboard'))
 
     return render_template('admin/edit_room.html', room=room)
 

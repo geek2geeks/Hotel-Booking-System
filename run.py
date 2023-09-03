@@ -1,5 +1,6 @@
-# run.py
-from app.routes import app
+from app.routes import create_app
+
+app = create_app()
 
 # Check if the script is the main entry point
 if __name__ == "__main__":
