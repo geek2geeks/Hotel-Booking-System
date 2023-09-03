@@ -1,6 +1,20 @@
 from datetime import datetime
 from app import db, bcrypt
+from enum import Enum
 
+class RoomStatus(Enum):
+    OCCUPIED = 'occupied'
+    AVAILABLE = 'available'
+
+class Room(db.Model):
+    ...
+    
+    @property
+    def status(self):
+        for booking in self.bookings:
+            if booking.start_date <= datetime.utcnow() <= booking.end_date:
+                return RoomStatus.OCCUPIED.value
+        return RoomStatus.AVAILABLE.value
 
 room_amenities = db.Table('room_amenities',
     db.Column('room_id', db.Integer, db.ForeignKey('room.id')),

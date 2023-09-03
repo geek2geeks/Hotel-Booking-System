@@ -6,31 +6,38 @@ from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
 from sqlalchemy import or_, and_
 from werkzeug.exceptions import BadRequestKeyError
+from functools import wraps
 
-# User Loader for Flask-Login
+# Decorator to check if the user is an admin
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_admin:
+            flash('Access restricted to admins.', 'danger')
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# User Loader function for Flask-Login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# Home route
+# Home route that displays all rooms
 @app.route('/')
 def index():
     rooms = Room.query.all()
     return render_template('index.html', rooms=rooms)
 
+# Login route to authenticate users
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Check if the user is already authenticated
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    # POST method for form submission
     if request.method == 'POST':
         try:
-            # Fetch user from the database using the provided email
             user = User.query.filter_by(email=request.form['email']).first()
-
-            # Check if user exists and the provided password is correct
             if user and user.check_password(request.form['password']):
                 login_user(user)
                 return redirect(request.args.get('next') or url_for('index'))
@@ -39,13 +46,11 @@ def login():
         except BadRequestKeyError:
             flash('Email field missing.', 'danger')
         except Exception as e:
-            flash(str(e), 'danger')  # Flash any exception for debugging purposes.
+            flash(str(e), 'danger')
 
-    # Render the login form
     return render_template('login.html')
 
-
-# Registration route
+# Route to register new users
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -76,7 +81,7 @@ def register():
 
     return render_template('register.html')
 
-# Room search route
+# Search functionality for rooms
 @app.route('/search_rooms', methods=['POST'])
 def search_rooms():
     room_type = request.form.get('roomType')
@@ -113,31 +118,25 @@ def search_rooms():
 
     return render_template('index.html', rooms=rooms)
 
-# User's dashboard route
+# Route for the user's dashboard
 @app.route('/dashboard')
 @login_required
 def dashboard():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()
     return render_template('dashboard.html', bookings=bookings)
 
-# Admin's dashboard route
+# Admin dashboard route with admin decorator applied
 @app.route('/admin/dashboard')
 @login_required
+@admin_required
 def admin_dashboard():
-    if not current_user.is_admin:
-        flash('Access restricted to admins.', 'danger')
-        return redirect(url_for('index'))
-    
     return render_template('admin/admin_dashboard.html')
 
-# Admin route to add a new room
+# Admin route to add a new room with admin decorator applied
 @app.route('/admin/add-room', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_room():
-    if not current_user.is_admin:
-        flash('Only admins can add rooms.', 'danger')
-        return redirect(url_for('index'))
-
     if request.method == 'POST':
         room = Room(name=request.form['name'], description=request.form['description'])
         db.session.add(room)
@@ -147,14 +146,11 @@ def add_room():
 
     return render_template('admin/add_room.html')
 
-# Admin route to edit an existing room
+# Admin route to edit an existing room with admin decorator applied
 @app.route('/admin/edit-room/<int:room_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def edit_room(room_id):
-    if not current_user.is_admin:
-        flash('Only admins can edit rooms.', 'danger')
-        return redirect(url_for('index'))
-
     room = Room.query.get(room_id)
     if not room:
         flash('Room not found.', 'danger')
@@ -169,30 +165,16 @@ def edit_room(room_id):
 
     return render_template('admin/edit_room.html', room=room)
 
-# Admin route to manage users
+# Admin route to manage users with admin decorator applied
 @app.route('/admin/manage-users')
 @login_required
+@admin_required
 def manage_users():
-    if not current_user.is_admin:
-        flash('Only admins can manage users.', 'danger')
-        return redirect(url_for('index'))
-
     users = User.query.all()
     return render_template('admin/manage_users.html', users=users)
 
-@app.route('/init_admin')
-def init_admin():
-    if not User.query.filter_by(email='admin@admin.com').first():
-        user = User(username='admin', email='admin@admin.com', is_admin=True)
-        user.set_password('As!101010')
-        db.session.add(user)
-        db.session.commit()
-        flash('Admin initialized!', 'success')
-    else:
-        flash('Admin already exists!', 'danger')
-    return redirect(url_for('index'))
 
-# Logout route
+# Route to log out the user
 @app.route('/logout')
 @login_required
 def logout():
