@@ -10,11 +10,11 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
     if request.method == 'POST':
         try:
-            email = request.form.get('email', default=None)  # Using default value as None
+            email = request.form.get('email', default=None)
             password = request.form.get('password', default=None)
             
             if not email:
@@ -23,7 +23,13 @@ def login():
             user = User.query.filter_by(email=email).first()
             if user and user.check_password(password):
                 login_user(user)
-                return redirect(request.args.get('next') or url_for('index'))
+
+                # Redirect user based on role
+                if user.is_admin:  # Assuming 'is_admin' is a boolean field in your User model
+                    return redirect(url_for('admin.admin_dashboard'))  # Assuming 'admin_dashboard' is your admin dashboard route
+                else:
+                    return redirect(request.args.get('next') or url_for('main.index'))
+
             else:
                 flash('Invalid email or password', 'danger')
         except BadRequestKeyError as e:
@@ -32,6 +38,7 @@ def login():
             flash(str(e), 'danger')
 
     return render_template('login.html')
+
 
 # Route to register new users
 @auth.route('/register', methods=['GET', 'POST'])
@@ -69,4 +76,4 @@ def register():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('main.index'))

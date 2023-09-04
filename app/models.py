@@ -1,4 +1,3 @@
-# models.py
 # app/models.py
 
 from datetime import datetime

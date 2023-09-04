@@ -1,0 +1,28 @@
+<!-- This is a simple example and should be expanded for production -->
+{% extends "base.html" %}
+{% block content %}
+<h2>Manage Users</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Admin</th>
+        <th>Actions</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.is_admin }}</td>
+        <td>
+            <a href="{{ url_for('admin.user_detail', user_id=user.id) }}">Details</a>
+            <form method="post" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
