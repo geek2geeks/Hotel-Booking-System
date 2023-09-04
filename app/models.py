@@ -10,6 +10,10 @@ class RoomStatus(Enum):
     OCCUPIED = 'occupied'
     AVAILABLE = 'available'
 
+class RoomType(Enum):
+    SINGLE = "SINGLE"
+    DOUBLE = "DOUBLE"
+
 # Association table to represent the many-to-many relationship between Room and Amenity
 room_amenities = db.Table('room_amenities',
     db.Column('room_id', db.Integer, db.ForeignKey('room.id')),  # Foreign key referring to room
@@ -42,7 +46,7 @@ class User(UserMixin, db.Model):
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     room_number = db.Column(db.String(50), nullable=False)
-    type = db.Column(db.String(50), nullable=False)
+    type = db.Column(db.Enum(RoomType), nullable=False)
     price = db.Column(db.Float, nullable=False)
     amenities = db.relationship('Amenity', secondary=room_amenities, backref='rooms')  # Many-to-many relationship with Amenity
     bookings = db.relationship('Booking', backref='room', lazy=True)  # One-to-many relationship with Booking
