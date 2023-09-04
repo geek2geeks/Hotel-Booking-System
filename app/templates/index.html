@@ -2,7 +2,9 @@
 
 {% block content %}
 <h2>Search Rooms</h2>
-<form action="{{ url_for('search_rooms') }}" method="post" class="mb-4">
+
+<!-- Corrected the action attribute here -->
+<form action="{{ url_for('main.search_rooms') }}" method="post" class="mb-4">
     <div class="row">
         <div class="col-md-3">
             <select id="roomType" name="roomType" class="form-control">
@@ -42,8 +44,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     $(function() {
         $("#start_date").datepicker();
@@ -51,3 +51,4 @@
     });
 </script>
 {% endblock %}
+

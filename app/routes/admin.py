@@ -4,7 +4,6 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Room, User
 from functools import wraps
 from flask_login import login_required, current_user
-from flask import current_app as app
 from app.extensions import db
 
 admin = Blueprint('admin', __name__)

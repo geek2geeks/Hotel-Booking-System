@@ -2,76 +2,78 @@
 <html lang="en">
 
 <head>
-    <!-- Setting character encoding for the webpage -->
+    <!-- Meta tag to set the character set for the page -->
     <meta charset="UTF-8">
-    <!-- Ensuring proper rendering and touch zooming for all devices -->
+    
+    <!-- Meta tag to control the viewport's size and scale -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Webpage title -->
+    <!-- Set the title of the page -->
     <title>Hotel Reservation System</title>
 
-    <!-- Importing Bootstrap CSS for website styling -->
+    <!-- Importing Bootstrap for styling and layout -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Importing jQuery UI styles for datepicker functionality -->
+    <!-- Importing jQuery UI styles for features like datepickers -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
 <body>
 
-    <!-- Starting the Navigation Bar -->
+    <!-- Navbar at the top of the page -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <!-- Website logo redirecting to the homepage -->
+        <!-- Brand logo and name -->
         <a class="navbar-brand" href="/">Hotel Geek</a>
 
-        <!-- Button for toggling navigation items in mobile view -->
+        <!-- Hamburger menu icon for mobile responsiveness -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Collapsable navigation items -->
+        <!-- Navigation links -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <!-- Basic navigation item to view rooms -->
+                <!-- Link to view all rooms -->
                 <li class="nav-item">
                     <a class="nav-link" href="/">Rooms</a>
                 </li>
 
-                <!-- Navigation items change based on user's authentication status and role -->
+                <!-- Links that appear based on the user's authentication status -->
                 {% if current_user.is_authenticated %}
-                <!-- Link to the user's dashboard -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard">Dashboard</a>
-                </li>
-                <!-- Additional link for admins to add a room -->
-                {% if current_user.is_admin %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/add-room">Add Room</a>
-                </li>
-                {% endif %}
-                <!-- Link to logout for authenticated users -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
-                </li>
+                    <!-- Dashboard link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+
+                    <!-- Admin-only link to add rooms -->
+                    {% if current_user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/add-room">Add Room</a>
+                        </li>
+                    {% endif %}
+                    
+                    <!-- Logout link -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
                 {% else %}
-                <!-- Links to login and register for non-authenticated users -->
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Register</a>
-                </li>
+                    <!-- Login and Register links (using updated paths) -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                    </li>
                 {% endif %}
             </ul>
         </div>
     </nav>
 
-    <!-- Container for displaying flash messages to the user -->
+    <!-- Container for flash messages -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <!-- Flash message with dynamic category and content -->
                     <div class="alert alert-{{ category }}">
                         {{ message }}
                     </div>
@@ -80,24 +82,27 @@
         {% endwith %}
     </div>
 
-    <!-- Main content of the webpage where other templates will inject their content -->
+    <!-- Main content placeholder -->
     <div class="container mt-4">
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- Website footer with copyright information -->
+    <!-- Footer section -->
     <footer class="bg-light text-center text-lg-start mt-4">
         <div class="container p-4">
             <p>&copy; 2023 Hotel Geek. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- Importing JS libraries for Bootstrap and other functionalities -->
+    <!-- JS Libraries -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    {% block scripts %}{% endblock %}
+
 
 </body>
 

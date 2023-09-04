@@ -1,25 +1,25 @@
-# app/__init__.py
+# File location: Hotel-Booking-System/app/routes/__init__.py
 
 from flask import Flask
 import os
 
 def create_app():
     # Setting the paths for templates and static directories
-    template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'templates'))
-    static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
+    template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
+    static_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
     
-    # Initialize Flask app
-    app = Flask(__name__, template_folder=template_path, static_folder=static_path)
-    # ... Rest of the code remains unchanged
-
+    # Initialize Flask app with template and static paths
+    app = Flask(__name__, template_folder=template_path)
 
     # Application secret key for sessions and cookies
     app.config['SECRET_KEY'] = 'As!101010'
 
     # Load configuration from instance folder
+    # File location: Hotel-Booking-System/instance/config.py
     app.config.from_object('instance.config.DevConfig')  
     
     # Bind app with Flask extensions
+    # File location: Hotel-Booking-System/app/extensions.py
     from app.extensions import db, migrate, login_manager, bcrypt
     db.init_app(app)
     migrate.init_app(app, db)
@@ -27,9 +27,13 @@ def create_app():
     bcrypt.init_app(app)
 
     # Import blueprints
-    from app.routes.admin import admin
-    from app.routes.auth import auth
-    from app.routes.main import main
+    # File locations: 
+    # Hotel-Booking-System/app/routes/admin.py
+    # Hotel-Booking-System/app/routes/auth.py
+    # Hotel-Booking-System/app/routes/main.py
+    from .admin import admin
+    from .auth import auth
+    from .main import main
 
     # Register blueprints
     app.register_blueprint(admin, url_prefix='/admin')
@@ -37,6 +41,7 @@ def create_app():
     app.register_blueprint(main)
 
     # Import models and User Loader function for Flask-Login
+    # File location: Hotel-Booking-System/app/models.py
     from app.models import User
 
     @login_manager.user_loader
