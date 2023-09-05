@@ -32,38 +32,33 @@ def list_rooms():
 def book_room(room_id):
     room = Room.query.get_or_404(room_id)
     
-    # If request is a POST request, handle the booking form submission
     if request.method == 'POST':
-        start_date_str = request.form.get('start_date', '').strip()
-        end_date_str = request.form.get('end_date', '').strip()
-
         try:
+            start_date_str = request.form.get('start_date', '').strip()
+            end_date_str = request.form.get('end_date', '').strip()
             start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
             end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
-        except ValueError:
-            flash('Invalid date format. Please select valid dates.', 'danger')
-            return render_template('book_room.html', room=room)
 
-        # Check if the room is available during the specified dates
-        overlapping_bookings = Booking.query.filter(
-            Booking.room_id == room_id,
-            Booking.start_date < end_date,
-            Booking.end_date > start_date
-        ).count()
+            overlapping_bookings = Booking.query.filter(
+                Booking.room_id == room_id,
+                Booking.start_date < end_date,
+                Booking.end_date > start_date
+            ).count()
 
-        # If overlapping bookings exist, show an error message
-        if overlapping_bookings > 0:
-            flash('Room is already booked during the specified dates.', 'danger')
-            return render_template('book_room.html', room=room)
+            if overlapping_bookings > 0:
+                raise ValueError('Room is already booked during the specified dates.')
 
-        # If room is available, create a new booking
-        booking = Booking(user_id=current_user.id, room_id=room_id, start_date=start_date, end_date=end_date)
-        db.session.add(booking)
-        db.session.commit()
-        flash('Room booked successfully!', 'success')
-        return redirect(url_for('main.dashboard'))
+            booking = Booking(user_id=current_user.id, room_id=room_id, start_date=start_date, end_date=end_date)
+            db.session.add(booking)
+            db.session.commit()
+            flash('Room booked successfully!', 'success')
+            return redirect(url_for('main.dashboard'))
+        except ValueError as e:
+            flash(str(e), 'danger')
+        except Exception:
+            db.session.rollback()
+            flash('Error booking the room. Please try again.', 'danger')
 
-    # If request is a GET request, show the booking form
     return render_template('book_room.html', room=room)
 
 # Search functionality for rooms

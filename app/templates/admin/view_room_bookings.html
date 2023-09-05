@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Bookings for Room {{ room.room_number }}</h2>  <!-- I've changed room.name to room.room_number assuming each room has a room_number attribute -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Booking ID</th>
+            <th>User</th>
+            <th>Check-In Date</th>
+            <th>Check-Out Date</th>
+            <th>Action</th> <!-- Column for delete action -->
+            <!-- Extend this table header for other booking details if necessary -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.id }}</td>
+            <td>{{ booking.user.name }}</td> <!-- Assuming each booking is associated with a user and has a 'name' attribute -->
+            <td>{{ booking.check_in_date }}</td>
+            <td>{{ booking.check_out_date }}</td>
+            <!-- Delete button for each booking -->
+            <td>
+                <form action="{{ url_for('admin.delete_booking', booking_id=booking.id) }}" method="POST">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
+            </td>
+            <!-- You can also add other booking details here -->
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+{% endblock %}

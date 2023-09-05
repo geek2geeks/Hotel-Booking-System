@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Room Details</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Room ID</th>
+            <th>Room Name</th>
+            <th>Price</th>
+            <!-- You can extend this to include other attributes like room type, amenities, etc. -->
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ room.id }}</td>
+            <td>{{ room.name }}</td>
+            <td>{{ room.price }}</td>
+        </tr>
+    </tbody>
+</table>
+<a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+{% endblock %}
