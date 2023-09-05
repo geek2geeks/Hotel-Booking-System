@@ -26,13 +26,22 @@ def login():
                 if user.is_admin:
                     return redirect(url_for('admin.admin_dashboard'))
                 else:
-                    return redirect(request.args.get('next') or url_for('main.index'))
+                    next_page = request.args.get('next')
+                    # Check if non-admin user is trying to access an admin-only route
+                    if next_page and "/admin/" not in next_page:
+                        return redirect(next_page)
+                    return redirect(url_for('main.index'))
             else:
                 flash('Invalid email or password', 'danger')
+        except ValueError as ve:
+            flash(str(ve), 'danger')
         except Exception as e:
-            flash(str(e), 'danger')
+            # Log the error for developer reference
+            print("Error during login:", str(e))
+            flash('An unexpected error occurred. Please try again.', 'danger')
 
     return render_template('login.html')
+
 
 
 @auth.route('/register', methods=['GET', 'POST'])

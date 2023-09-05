@@ -25,6 +25,7 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    login_manager.login_view = 'auth.login'
 
     # Import blueprints
     # File locations: 

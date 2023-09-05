@@ -15,6 +15,16 @@ print("Template Path: ", template_path)
 
 main = Blueprint('main', __name__)
 
+def customer_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.is_admin:
+            flash('You do not have permission to access this page.', 'danger')
+            return redirect(url_for('main.index'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 def admin_required(f):
     """
     Decorator to ensure that the current user is an admin.
@@ -36,12 +46,14 @@ def index():
 
 @main.route('/list-rooms')
 @login_required
+@customer_required
 def list_rooms():
     rooms = Room.query.all()
     return render_template('list_rooms.html', rooms=rooms)
 
 @main.route('/book-room/<int:room_id>', methods=['GET', 'POST'])
 @login_required
+@customer_required
 def book_room(room_id):
     room = Room.query.get_or_404(room_id)
     
@@ -123,6 +135,7 @@ def admin_dashboard():
 # Route for the user's dashboard
 @main.route('/dashboard')
 @login_required
+@customer_required
 def dashboard():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()
     return render_template('user_dashboard.html', bookings=bookings)

@@ -2,12 +2,15 @@
 
 {% block content %}
 <h2>Your Bookings</h2>
+
+<!-- Table to display all bookings -->
 <table class="table">
     <thead>
         <tr>
             <th>Booking ID</th>
             <th>Room</th>
-            <th>Date</th>
+            <th>Start Date</th>
+            <th>End Date</th>
             <th>Status</th>
             <th>Action</th>
         </tr>
@@ -17,11 +20,15 @@
         <tr>
             <td>{{ booking.id }}</td>
             <td>{{ booking.room_name }}</td>
-            <td>{{ booking.date }}</td>
+            <td>{{ booking.start_date }}</td>
+            <td>{{ booking.end_date }}</td>
             <td>{{ booking.status }}</td>
             <td><a href="/booking/{{ booking.id }}/cancel" class="btn btn-danger">Cancel</a></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
+<!-- Button to navigate back to the dashboard -->
+<a href="{{ url_for('main.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
 {% endblock %}

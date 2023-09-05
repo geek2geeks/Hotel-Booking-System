@@ -82,6 +82,11 @@ class Amenity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
 
+class BookingStatus(Enum):
+    PENDING = "PENDING"
+    CONFIRMED = "CONFIRMED"
+    CANCELLED = "CANCELLED"
+
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -89,6 +94,7 @@ class Booking(db.Model):
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
     total_price = db.Column(db.Float)
+    status = db.Column(db.Enum(BookingStatus), default=BookingStatus.PENDING)
 
     def calculate_total_price(self):
         """
@@ -110,6 +116,7 @@ class Booking(db.Model):
         elif key == "end_date" and date <= self.start_date:
             raise ValueError("End date must be after start date")
         return date
+
 
 # Below the Booking class, add these hooks using the event API:
 
