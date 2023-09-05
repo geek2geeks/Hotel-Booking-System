@@ -62,6 +62,7 @@ def book_room(room_id):
                 raise ValueError('Room is already booked during the specified dates.')
 
             booking = Booking(user_id=current_user.id, room_id=room_id, start_date=start_date, end_date=end_date)
+            booking.calculate_total_price()
             db.session.add(booking)
             db.session.commit()
             flash('Room booked successfully!', 'success')
@@ -73,6 +74,7 @@ def book_room(room_id):
             flash('Error booking the room. Please try again.', 'danger')
 
     return render_template('book_room.html', room=room)
+
 
 # Search functionality for rooms
 @main.route('/search_rooms', methods=['POST'])

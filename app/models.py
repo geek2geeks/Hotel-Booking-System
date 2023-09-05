@@ -111,16 +111,22 @@ class Booking(db.Model):
             raise ValueError("End date must be after start date")
         return date
 
-    @db.after_insert
-    def _after_insert(self):
-        """
-        After a booking is inserted into the database, calculate its total price.
-        """
-        self.calculate_total_price()
+# Below the Booking class, add these hooks using the event API:
 
-    @db.after_update
-    def _after_update(self):
-        """
-        After a booking is updated in the database, recalculate its total price.
-        """
-        self.calculate_total_price()
+from sqlalchemy import event
+
+def after_insert_booking_listener(mapper, connection, target):
+    """
+    After a booking is inserted into the database, calculate its total price.
+    """
+    target.calculate_total_price()
+
+def after_update_booking_listener(mapper, connection, target):
+    """
+    After a booking is updated in the database, recalculate its total price.
+    """
+    target.calculate_total_price()
+
+# Listen to the appropriate events
+event.listen(Booking, 'after_insert', after_insert_booking_listener)
+event.listen(Booking, 'after_update', after_update_booking_listener)
