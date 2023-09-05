@@ -120,18 +120,7 @@ def delete_room(room_id):
     flash('Room deleted!', 'success')
     return redirect(url_for('admin.admin_dashboard'))
 
-@admin.route('/view-room-bookings/<int:room_id>', methods=['GET'])
-@login_required
-@admin_required
-def view_room_bookings(room_id):
-    room = Room.query.get(room_id)
-    if not room:
-        flash('Room not found.', 'danger')
-        return redirect(url_for('admin.admin_dashboard'))
-    
-    # You might need to implement logic to fetch all the bookings associated with this room.
-    bookings = []  # Fetch bookings for this room, replace this with actual logic
-    return render_template('admin/view_room_bookings.html', room=room, bookings=bookings)
+
 
 @admin.route('/edit-room/<int:room_id>', methods=['GET', 'POST'])
 @login_required

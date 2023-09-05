@@ -8,11 +8,24 @@ from sqlalchemy import or_, and_
 from flask import current_app as app
 from app.extensions import db
 from flask_login import login_required, current_user
+from functools import wraps
 
 template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
 print("Template Path: ", template_path)
 
 main = Blueprint('main', __name__)
+
+def admin_required(f):
+    """
+    Decorator to ensure that the current user is an admin.
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or not current_user.is_admin:
+            flash('You do not have permission to access this page.', 'danger')
+            return redirect(url_for('main.index'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Home route that displays all rooms
 @main.route('/')
@@ -97,6 +110,13 @@ def search_rooms():
     rooms = query.all()
 
     return render_template('index.html', rooms=rooms)
+
+@main.route('/admin-dashboard')
+@login_required
+@admin_required
+def admin_dashboard():
+    # Implement the logic for the admin dashboard here
+    return render_template('admin_dashboard.html')
 
 # Route for the user's dashboard
 @main.route('/dashboard')
