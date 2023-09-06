@@ -1,14 +1,23 @@
 # Relative path: /c:/Users/ukped/OneDrive - RTC Education Ltd/Desktop/hotel booking system/Hotel-Booking-System/app/routes/admin.py
 
-from flask import Blueprint, render_template, redirect, url_for, flash, request
-from app.models import Room, User, Amenity, Booking
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
+from app.models import Room, User, Amenity, Booking, Photo
 from functools import wraps
 from flask_login import login_required, current_user
 from app.extensions import db
 from sqlalchemy.exc import IntegrityError
+from werkzeug.utils import secure_filename
+import os
 
 admin = Blueprint('admin', __name__)
 
+# Assuming Photo is a model defined in app.models
+from app.models import Photo
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # Decorator to check if user has admin rights
@@ -84,6 +93,17 @@ def add_room():
         selected_amenities = request.form.getlist('amenities')
         room.amenities = Amenity.query.filter(Amenity.name.in_(selected_amenities)).all()
 
+        # Handle the photos upload
+        if 'photos' in request.files:
+            for photo in request.files.getlist('photos'):
+                if photo and allowed_file(photo.filename):
+                    filename = secure_filename(photo.filename)
+                    # Make sure to create the room_photos directory in your static folder
+                    photo_path = os.path.join(current_app.static_folder, 'room_photos', filename)
+                    photo.save(photo_path)
+                    new_photo = Photo(path=photo_path)
+                    room.photos.append(new_photo)
+
         db.session.add(room)
         db.session.commit()
         flash('Room added successfully!', 'success')
@@ -152,6 +172,18 @@ def edit_room(room_id):
 def manage_users():
     users = User.query.all()
     return render_template('admin/manage_users.html', users=users)
+
+@admin.route('/room/<int:room_id>', methods=['GET'])
+@login_required
+@admin_required
+def view_room(room_id):
+    room = Room.query.get(room_id)
+    if not room:
+        flash('Room not found.', 'danger')
+        return redirect(url_for('admin.admin_dashboard'))
+    
+    return render_template('admin/view_room.html', room=room)
+
 
 @admin.route('/user/<int:user_id>', methods=['GET', 'POST'])
 @login_required

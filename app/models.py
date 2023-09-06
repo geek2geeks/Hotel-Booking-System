@@ -5,14 +5,21 @@ from app.extensions import db, bcrypt
 from enum import Enum
 from flask_login import UserMixin
 from datetime import timedelta
+from datetime import datetime
+
+class Photo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(255), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
+
 
 class RoomType(Enum):
     SINGLE = "SINGLE"
     DOUBLE = "DOUBLE"
 
 room_amenities = db.Table('room_amenities',
-    db.Column('room_id', db.Integer, db.ForeignKey('room.id')),
-    db.Column('amenity_id', db.Integer, db.ForeignKey('amenity.id'))
+    db.Column('room_id', db.Integer, db.ForeignKey('room.id'), primary_key=True),
+    db.Column('amenity_id', db.Integer, db.ForeignKey('amenity.id'), primary_key=True)
 )
 
 class User(UserMixin, db.Model):
@@ -34,13 +41,15 @@ class User(UserMixin, db.Model):
         return bcrypt.check_password_hash(self.password_hash, password)
 
 class Room(db.Model):
+    __tablename__ = 'room'
     id = db.Column(db.Integer, primary_key=True)
     room_number = db.Column(db.String(50), nullable=False)
     type = db.Column(db.Enum(RoomType), nullable=False)
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.String(255), nullable=True)
-    amenities = db.relationship('Amenity', secondary=room_amenities, backref='rooms')
+    amenities = db.relationship('Amenity', secondary=room_amenities, backref='room')  # Updated the backref
     bookings = db.relationship('Booking', backref='room', lazy=True)
+    photos = db.relationship('Photo', backref='room', lazy=True)
 
     @property
     def status(self):
@@ -56,7 +65,7 @@ class Room(db.Model):
             if booking.start_date <= date <= booking.end_date:
                 return True
         return False
-    
+
     def is_available(self, check_in_date, check_out_date):
         """
         Check if the room is available for a given date range.
@@ -65,18 +74,9 @@ class Room(db.Model):
         :return: Boolean indicating if room is available.
         """
         for booking in self.bookings:
-            # If there's any overlap between the desired date range and any of the booking date ranges,
-            # the room is not available.
             if not (booking.end_date < check_in_date or booking.start_date > check_out_date):
                 return False
         return True
-    
-    @property
-    def amenities_list(self):
-        """
-        Return amenities of the room as a comma-separated string.
-        """
-        return ', '.join([amenity.name for amenity in self.amenities])
 
 class Amenity(db.Model):
     id = db.Column(db.Integer, primary_key=True)

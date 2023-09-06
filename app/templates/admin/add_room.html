@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2>Add a New Room</h2>
-<form action="/admin/add-room" method="post">
+<form action="/admin/add-room" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label for="roomNumber">Room Number:</label>
         <input type="text" class="form-control" id="roomNumber" name="room_number" required>
@@ -14,9 +14,7 @@
         <select class="form-control" id="roomType" name="room_type" required>
             <option value="SINGLE">SINGLE</option>
             <option value="DOUBLE">DOUBLE</option>
-            
-            
-             <!-- ... You can add more room types as options here ... -->
+            <!-- ... You can add more room types as options here ... -->
         </select>
     </div>
     
@@ -38,7 +36,13 @@
         
         <!-- ... You can add more amenities as checkboxes here ... -->
     </div>
-    
+
+    <!-- Input for uploading photos -->
+    <div class="form-group">
+        <label for="photos">Room Photos:</label>
+        <input type="file" class="form-control" id="photos" name="photos" multiple>
+    </div>
+
     <button type="submit" class="btn btn-primary">Add Room</button>
 </form>
 {% endblock %}
