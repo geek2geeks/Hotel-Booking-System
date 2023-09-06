@@ -1,0 +1,69 @@
+Hotel-Booking-System
+├── .gitignore
+├── app
+│   ├── extensions.py
+│   ├── models.py
+│   ├── routes
+│   │   ├── admin.py
+│   │   ├── auth.py
+│   │   ├── main.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       ├── admin.cpython-310.pyc
+│   │       ├── auth.cpython-310.pyc
+│   │       ├── main.cpython-310.pyc
+│   │       └── __init__.cpython-310.pyc
+│   ├── static
+│   │   └── room_photos
+│   ├── templates
+│   │   ├── admin
+│   │   │   ├── add_room.html
+│   │   │   ├── admin_dashboard.html
+│   │   │   ├── edit_room.html
+│   │   │   ├── list_rooms.html
+│   │   │   ├── manage_users.html
+│   │   │   ├── user_detail.html
+│   │   │   ├── view_room.html
+│   │   │   └── view_room_bookings.html
+│   │   ├── base.html
+│   │   ├── book_room.html
+│   │   ├── index.html
+│   │   ├── list.rooms.html
+│   │   ├── login.html
+│   │   ├── register.html
+│   │   ├── user_dashboard.html
+│   │   └── view_all_bookings.html
+│   └── __pycache__
+│       ├── extensions.cpython-310.pyc
+│       └── models.cpython-310.pyc
+├── dtb.pdf
+├── instance
+│   ├── config.py
+│   └── __pycache__
+│       └── config.cpython-310.pyc
+├── migrations
+│   ├── alembic.ini
+│   ├── env.py
+│   ├── README
+│   ├── script.py.mako
+│   ├── versions
+│   │   ├── 23d26a5b1eef_description_of_changes.py
+│   │   ├── 24f0cae5d080_added_status_attribute_to_booking_model.py
+│   │   ├── c050e6721c43_updated_model_to_include_admin.py
+│   │   ├── eb7507e10d23_.py
+│   │   ├── efd7fb8b7453_initial_tables.py
+│   │   └── __pycache__
+│   │       ├── 23d26a5b1eef_description_of_changes.cpython-310.pyc
+│   │       ├── 24f0cae5d080_added_status_attribute_to_booking_model.cpython-310.pyc
+│   │       ├── c050e6721c43_updated_model_to_include_admin.cpython-310.pyc
+│   │       ├── eb7507e10d23_.cpython-310.pyc
+│   │       └── efd7fb8b7453_initial_tables.cpython-310.pyc
+│   └── __pycache__
+│       └── env.cpython-310.pyc
+├── README.md
+├── requirements.txt
+├── run.py
+├── site.db
+├── site.sqbpro
+└── __pycache__
+    └── run.cpython-310.pyc

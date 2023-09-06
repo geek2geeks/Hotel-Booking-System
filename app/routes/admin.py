@@ -1,7 +1,7 @@
 # Relative path: /c:/Users/ukped/OneDrive - RTC Education Ltd/Desktop/hotel booking system/Hotel-Booking-System/app/routes/admin.py
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
-from app.models import Room, User, Amenity, Booking, Photo
+from app.models import Room, User, Amenity, Booking, Photo, admin
 from functools import wraps
 from flask_login import login_required, current_user
 from app.extensions import db
@@ -125,6 +125,11 @@ def view_room_bookings(room_id):
     
     return render_template('admin/view_room_bookings.html', room=room, bookings=bookings)
 
+@admin.route('/list-rooms')
+@admin_required
+def list_rooms_for_admin():
+    rooms = Room.query.all()
+    return render_template('admin/list_rooms.html', rooms=rooms)
 
 @admin.route('/delete-room/<int:room_id>', methods=['POST'])
 @login_required
