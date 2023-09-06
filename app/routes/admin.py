@@ -1,7 +1,7 @@
 # Relative path: /c:/Users/ukped/OneDrive - RTC Education Ltd/Desktop/hotel booking system/Hotel-Booking-System/app/routes/admin.py
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app
-from app.models import Room, User, Amenity, Booking, Photo, admin
+from app.models import Room, User, Amenity, Booking, Photo
 from functools import wraps
 from flask_login import login_required, current_user
 from app.extensions import db

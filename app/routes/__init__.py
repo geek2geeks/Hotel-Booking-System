@@ -34,12 +34,12 @@ def create_app():
     # Hotel-Booking-System/app/routes/main.py
     from .admin import admin
     from .auth import auth
-    from .main import main
+    from .customers import main
 
     # Register blueprints
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(main, url_prefix='/main')
+    app.register_blueprint(customers, url_prefix='/main')
 
     # Import models and User Loader function for Flask-Login
     # File location: Hotel-Booking-System/app/models.py

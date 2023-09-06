@@ -1,48 +1,38 @@
 # File: Hotel-Booking-System/app/routes/main.py
+# Standard library imports
 
 import os
-from flask import Blueprint, render_template, redirect, url_for, flash, request
-from app.models import Room, Booking
 from datetime import datetime
-from sqlalchemy import or_, and_
-from flask import current_app as app
-from app.extensions import db
-from flask_login import login_required, current_user
 from functools import wraps
 
-template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'templates'))
-print("Template Path: ", template_path)
+# Third-party library imports
+from flask import Blueprint, render_template, redirect, url_for, flash, request, current_app as app
+from sqlalchemy import or_, and_
+from flask_login import login_required, current_user
+
+# Local application/library specific imports
+from app.models import Room, Booking
+from app.extensions import db
 
 main = Blueprint('main', __name__)
 
-def customer_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.is_admin:
-            flash('You do not have permission to access this page.', 'danger')
-            return redirect(url_for('main.index'))
-        return f(*args, **kwargs)
-    return decorated_function
+def role_required(is_admin: bool):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.is_authenticated or current_user.is_admin != is_admin:
+                flash('You do not have permission to access this page.', 'danger')
+                return redirect(url_for('main.index'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
+customer_required = role_required(is_admin=False)
+admin_required = role_required(is_admin=True)
 
-def admin_required(f):
-    """
-    Decorator to ensure that the current user is an admin.
-    """
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or not current_user.is_admin:
-            flash('You do not have permission to access this page.', 'danger')
-            return redirect(url_for('main.index'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-# Home route that displays all rooms
 @main.route('/')
 def index():
-    rooms = Room.query.all()
-    print("Template Path: ", app.template_folder)
-    return render_template('index.html', rooms=rooms)
+    return render_template('index.html')
 
 @main.route('/list-rooms')
 @login_required
