@@ -1,65 +1,43 @@
-<!-- app\templates\base.html -->
+<!-- app\templates\customers\base.html -->
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <!-- Meta tag to set the character set for the page -->
     <meta charset="UTF-8">
-    
-    <!-- Meta tag to control the viewport's size and scale -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Set the title of the page -->
     <title>Hotel Reservation System</title>
 
-    <!-- Importing Bootstrap for styling and layout -->
+    <!-- Keeping the Bootstrap and jQuery UI CDN links -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Importing jQuery UI styles for features like datepickers -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
 
 <body>
 
-    <!-- Navbar at the top of the page -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <!-- Brand logo and name -->
-        <a class="navbar-brand" href="/">Hotel Geek</a>
-
-        <!-- Hamburger menu icon for mobile responsiveness -->
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">Hotel Geek</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <!-- Navigation links -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <!-- Link to view all rooms -->
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Rooms</a>
+                    <a class="nav-link" href="{{ url_for('main.index') }}">Rooms</a>
                 </li>
-
-                <!-- Links that appear based on the user's authentication status -->
                 {% if current_user.is_authenticated %}
-                    <!-- Dashboard link -->
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                        <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
                     </li>
-
-                    <!-- Admin-only link to add rooms -->
                     {% if current_user.is_admin %}
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/add-room">Add Room</a>
+                            <a class="nav-link" href="{{ url_for('admin.add_room') }}">Add Room</a>
                         </li>
                     {% endif %}
-                    
-                    <!-- Logout link -->
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
                     </li>
                 {% else %}
-                    <!-- Login and Register links (using updated paths) -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
                     </li>
@@ -71,7 +49,6 @@
         </div>
     </nav>
 
-    <!-- Container for flash messages -->
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -84,20 +61,18 @@
         {% endwith %}
     </div>
 
-    <!-- Main content placeholder -->
     <div class="container mt-4">
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- Footer section -->
     <footer class="bg-light text-center text-lg-start mt-4">
         <div class="container p-4">
             <p>&copy; 2023 Hotel Geek. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- JS Libraries -->
+    <!-- Keeping the Bootstrap, jQuery, and other library CDN links -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
@@ -105,7 +80,7 @@
 
     {% block scripts %}{% endblock %}
 
-
 </body>
 
 </html>
+

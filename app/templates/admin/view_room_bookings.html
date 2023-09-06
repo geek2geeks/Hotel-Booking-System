@@ -1,10 +1,9 @@
 <!-- app\templates\admin\view_room_bookings.html -->
 
-
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Bookings for Room {{ room.room_number }}</h2>  <!-- I've changed room.name to room.room_number assuming each room has a room_number attribute -->
+<h2>Bookings for Room {{ room.room_number }} ({{ room.type.value }} - {{ room.price }}) - Status: {{ room.status }}</h2>
 <table class="table">
     <thead>
         <tr>
@@ -12,24 +11,26 @@
             <th>User</th>
             <th>Check-In Date</th>
             <th>Check-Out Date</th>
+            <th>Status</th> <!-- Booking Status -->
+            <th>Total Price</th> <!-- Booking Total Price -->
             <th>Action</th> <!-- Column for delete action -->
-            <!-- Extend this table header for other booking details if necessary -->
         </tr>
     </thead>
     <tbody>
-        {% for booking in bookings %}
+        {% for booking in room.bookings %}
         <tr>
             <td>{{ booking.id }}</td>
-            <td>{{ booking.user.name }}</td> <!-- Assuming each booking is associated with a user and has a 'name' attribute -->
-            <td>{{ booking.check_in_date }}</td>
-            <td>{{ booking.check_out_date }}</td>
+            <td>{{ booking.user.username }} ({{ booking.user.email }})</td>
+            <td>{{ booking.start_date }}</td>
+            <td>{{ booking.end_date }}</td>
+            <td>{{ booking.status.value }}</td>
+            <td>{{ booking.total_price }}</td>
             <!-- Delete button for each booking -->
             <td>
                 <form action="{{ url_for('admin.delete_booking', booking_id=booking.id) }}" method="POST">
                     <button class="btn btn-danger" type="submit">Delete</button>
                 </form>
             </td>
-            <!-- You can also add other booking details here -->
         </tr>
         {% endfor %}
     </tbody>

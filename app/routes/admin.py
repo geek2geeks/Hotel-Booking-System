@@ -11,9 +11,6 @@ import os
 
 admin = Blueprint('admin', __name__)
 
-# Assuming Photo is a model defined in app.models
-from app.models import Photo
-
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -26,7 +23,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if not current_user.is_admin:
             flash('Access restricted to admins.', 'danger')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('customers.index'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -129,7 +126,7 @@ def view_room_bookings(room_id):
 @admin_required
 def list_rooms_for_admin():
     rooms = Room.query.all()
-    return render_template('admin/list_rooms.html', rooms=rooms)
+    return render_template('admin/all_rooms.html', rooms=rooms)
 
 @admin.route('/delete-room/<int:room_id>', methods=['POST'])
 @login_required

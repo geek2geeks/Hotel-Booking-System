@@ -31,15 +31,15 @@ def create_app():
     # File locations: 
     # Hotel-Booking-System/app/routes/admin.py
     # Hotel-Booking-System/app/routes/auth.py
-    # Hotel-Booking-System/app/routes/main.py
+    # Hotel-Booking-System/app/routes/customers.py
     from .admin import admin
     from .auth import auth
-    from .customers import main
-
+    from .customers import customers
+    
     # Register blueprints
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(customers, url_prefix='/main')
+    app.register_blueprint(customers, url_prefix='/customers')
 
     # Import models and User Loader function for Flask-Login
     # File location: Hotel-Booking-System/app/models.py

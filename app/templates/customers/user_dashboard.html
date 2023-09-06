@@ -1,16 +1,12 @@
-<!-- app\templates\user_dashboard.html -->
-
-
+<!-- app\templates\customers\user_dashboard.html -->
 {% extends "base.html" %}
 
 {% block content %}
 <h2>Welcome, {{ current_user.username }}</h2>
 <p>Here are your upcoming bookings:</p>
-<!-- Sample code for displaying bookings, adjust as per your data structure -->
 {% for booking in bookings %}
     <p>Booking ID: {{ booking.id }} for room {{ booking.room_name }} on {{ booking.date }}.</p>
 {% endfor %}
 <a href="/new-booking" class="btn btn-primary">Book a New Room</a>
-<!-- Inside user_dashboard.html -->
-<a href="{{ url_for('main.view_all_bookings') }}" class="btn btn-secondary">View All Bookings</a>
+<a href="{{ url_for('customers.view_all_bookings') }}" class="btn btn-secondary">View All Bookings</a>
 {% endblock %}

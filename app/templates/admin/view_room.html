@@ -1,6 +1,5 @@
 <!-- app\templates\admin\view_room.html -->
 
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -9,18 +8,34 @@
     <thead>
         <tr>
             <th>Room ID</th>
-            <th>Room Name</th>
+            <th>Room Number</th>
+            <th>Room Type</th>
             <th>Price</th>
-            <!-- You can extend this to include other attributes like room type, amenities, etc. -->
+            <th>Description</th>
+            <th>Amenities</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>{{ room.id }}</td>
-            <td>{{ room.name }}</td>
+            <td>{{ room.room_number }}</td>
+            <td>{{ room.type.value }}</td>
             <td>{{ room.price }}</td>
+            <td>{{ room.description }}</td>
+            <td>
+                {% for amenity in room.amenities %}
+                    {{ amenity.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
         </tr>
     </tbody>
 </table>
+
+<h3>Room Photos:</h3>
+{% for photo in room.photos %}
+    <img src="{{ photo.path }}" alt="Room Photo" style="width:200px; margin-right:10px;">
+{% endfor %}
+
+<a href="{{ url_for('admin.view_room_bookings', room_id=room.id) }}" class="btn btn-info">View Bookings</a>
 <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
 {% endblock %}

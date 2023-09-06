@@ -1,6 +1,5 @@
-# File: Hotel-Booking-System/app/routes/main.py
+# File: Hotel-Booking-System/app/routes/customers.py
 # Standard library imports
-
 import os
 from datetime import datetime
 from functools import wraps
@@ -14,7 +13,9 @@ from flask_login import login_required, current_user
 from app.models import Room, Booking
 from app.extensions import db
 
-main = Blueprint('main', __name__)
+customers = Blueprint('customers', __name__)
+
+DATE_FORMAT = '%Y-%m-%d'
 
 def role_required(is_admin: bool):
     def decorator(f):
@@ -22,7 +23,7 @@ def role_required(is_admin: bool):
         def decorated_function(*args, **kwargs):
             if not current_user.is_authenticated or current_user.is_admin != is_admin:
                 flash('You do not have permission to access this page.', 'danger')
-                return redirect(url_for('main.index'))
+                return redirect(url_for('customers.index'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -30,18 +31,18 @@ def role_required(is_admin: bool):
 customer_required = role_required(is_admin=False)
 admin_required = role_required(is_admin=True)
 
-@main.route('/')
+@customers.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('customers/index.html')
 
-@main.route('/list-rooms')
+@customers.route('/list-rooms')
 @login_required
 @customer_required
 def list_rooms():
     rooms = Room.query.all()
-    return render_template('list_rooms.html', rooms=rooms)
+    return render_template('customers/list.rooms.html', rooms=rooms)
 
-@main.route('/book-room/<int:room_id>', methods=['GET', 'POST'])
+@customers.route('/book-room/<int:room_id>', methods=['GET', 'POST'])
 @login_required
 @customer_required
 def book_room(room_id):
@@ -51,8 +52,8 @@ def book_room(room_id):
         try:
             start_date_str = request.form.get('start_date', '').strip()
             end_date_str = request.form.get('end_date', '').strip()
-            start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
-            end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+            start_date = datetime.strptime(start_date_str, DATE_FORMAT)
+            end_date = datetime.strptime(end_date_str, DATE_FORMAT)
 
             overlapping_bookings = Booking.query.filter(
                 Booking.room_id == room_id,
@@ -68,18 +69,18 @@ def book_room(room_id):
             db.session.add(booking)
             db.session.commit()
             flash('Room booked successfully!', 'success')
-            return redirect(url_for('main.dashboard'))
+            return redirect(url_for('customers.dashboard'))
         except ValueError as e:
             flash(str(e), 'danger')
-        except Exception:
+            print(f"ValueError: {str(e)}")
+        except Exception as e:
             db.session.rollback()
             flash('Error booking the room. Please try again.', 'danger')
+            print(f"Error: {str(e)}")
 
-    return render_template('book_room.html', room=room)
+    return render_template('customers/book_room.html', room=room)
 
-
-# Search functionality for rooms
-@main.route('/search_rooms', methods=['POST'])
+@customers.route('/search_rooms', methods=['POST'])
 def search_rooms():
     room_type = request.form.get('roomType')
     start_date_str = request.form.get('start_date', '').strip()
@@ -87,11 +88,11 @@ def search_rooms():
     search_term = request.form.get('searchTerm', '').strip()
 
     try:
-        start_date = datetime.strptime(start_date_str, '%m/%d/%Y') if start_date_str else None
-        end_date = datetime.strptime(end_date_str, '%m/%d/%Y') if end_date_str else None
+        start_date = datetime.strptime(start_date_str, DATE_FORMAT) if start_date_str else None
+        end_date = datetime.strptime(end_date_str, DATE_FORMAT) if end_date_str else None
     except ValueError:
         flash('Invalid date format. Please select valid dates.', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('customers.index'))
 
     query = Room.query
 
@@ -113,19 +114,11 @@ def search_rooms():
 
     rooms = query.all()
 
-    return render_template('index.html', rooms=rooms)
+    return render_template('customers/index.html', rooms=rooms)
 
-@main.route('/admin-dashboard')
-@login_required
-@admin_required
-def admin_dashboard():
-    # Implement the logic for the admin dashboard here
-    return render_template('admin_dashboard.html')
-
-# Route for the user's dashboard
-@main.route('/dashboard')
+@customers.route('/dashboard')
 @login_required
 @customer_required
 def dashboard():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()
-    return render_template('user_dashboard.html', bookings=bookings)
+    return render_template('customers/user_dashboard.html', bookings=bookings)

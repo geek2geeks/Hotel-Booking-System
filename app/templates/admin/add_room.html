@@ -1,8 +1,5 @@
-###<!-- app\templates\admin\add_room.html -->
-
-
+<!-- app\templates\admin\add_room.html -->
 {% extends "base.html" %}
-
 {% block content %}
 <h2>Add a New Room</h2>
 <form action="/admin/add-room" method="post" enctype="multipart/form-data">
@@ -28,16 +25,10 @@
     
     <div class="form-group">
         <label>Amenities:</label><br>
-        <input type="checkbox" id="wifi" name="amenities" value="wifi">
-        <label for="wifi">WiFi</label><br>
-        
-        <input type="checkbox" id="tv" name="amenities" value="tv">
-        <label for="tv">TV</label><br>
-        
-        <input type="checkbox" id="ac" name="amenities" value="ac">
-        <label for="ac">Air Conditioning</label><br>
-        
-        <!-- ... You can add more amenities as checkboxes here ... -->
+        {% for amenity in all_amenities %}
+            <input type="checkbox" id="{{ amenity.name }}" name="amenities" value="{{ amenity.id }}">
+            <label for="{{ amenity.name }}">{{ amenity.name }}</label><br>
+        {% endfor %}
     </div>
 
     <!-- Input for uploading photos -->

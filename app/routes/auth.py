@@ -10,7 +10,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('customers.index'))
 
     if request.method == 'POST':
         try:
@@ -30,7 +30,7 @@ def login():
                     # Check if non-admin user is trying to access an admin-only route
                     if next_page and "/admin/" not in next_page:
                         return redirect(next_page)
-                    return redirect(url_for('main.index'))
+                    return redirect(url_for('customers.index'))
             else:
                 flash('Invalid email or password', 'danger')
         except ValueError as ve:
@@ -40,14 +40,15 @@ def login():
             print("Error during login:", str(e))
             flash('An unexpected error occurred. Please try again.', 'danger')
 
-    return render_template('login.html')
+    return render_template('customers/login.html')
+
 
 
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('customers.index'))
 
     if request.method == 'POST':
         try:
@@ -68,7 +69,7 @@ def register():
 
             login_user(user)
             flash('Registration successful. Welcome!', 'success')
-            return redirect(url_for('main.index'))
+            return redirect(url_for('customers.index'))
         except ValueError as e:
             flash(str(e), 'danger')
             return redirect(url_for('auth.register'))
@@ -76,11 +77,11 @@ def register():
             db.session.rollback()
             flash('Error registering the user. Please try again.', 'danger')
 
-    return render_template('register.html')
+    return render_template('customers/register.html')
 
 # Route to log out the user
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('customers.index'))
