@@ -22,7 +22,7 @@
                 <td>{{ room.type }}</td>
                 <td>${{ room.price }}</td>
                 <td>
-                    <a href="{{ url_for('main.book_room', room_id=room.id) }}" class="btn btn-primary">Book Now</a>
+                    <a href="{{ url_for('customers.book_room', room_id=room.id) }}" class="btn btn-primary">Book Now</a>
                 </td>
             </tr>
             {% endfor %}

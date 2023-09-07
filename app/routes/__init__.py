@@ -39,7 +39,7 @@ def create_app():
     # Register blueprints
     app.register_blueprint(admin, url_prefix='/admin')
     app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(customers, url_prefix='/customers')
+    app.register_blueprint(customers, url_prefix='/')
 
     # Import models and User Loader function for Flask-Login
     # File location: Hotel-Booking-System/app/models.py

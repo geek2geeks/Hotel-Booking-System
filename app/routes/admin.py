@@ -23,7 +23,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if not current_user.is_admin:
             flash('Access restricted to admins.', 'danger')
-            return redirect(url_for('customers.index'))
+            return redirect(url_for('costumers.index'))
         return f(*args, **kwargs)
     return decorated_function
 

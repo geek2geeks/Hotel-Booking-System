@@ -39,8 +39,9 @@ def index():
 @login_required
 @customer_required
 def list_rooms():
-    rooms = Room.query.all()
-    return render_template('customers/list.rooms.html', rooms=rooms)
+    room = Room.query.all()
+    return render_template('customers/book_room.html', room=room)
+
 
 @customers.route('/book-room/<int:room_id>', methods=['GET', 'POST'])
 @login_required
@@ -80,6 +81,7 @@ def book_room(room_id):
 
     return render_template('customers/book_room.html', room=room)
 
+
 @customers.route('/search_rooms', methods=['POST'])
 def search_rooms():
     room_type = request.form.get('roomType')
@@ -115,6 +117,7 @@ def search_rooms():
     rooms = query.all()
 
     return render_template('customers/index.html', rooms=rooms)
+
 
 @customers.route('/dashboard')
 @login_required
