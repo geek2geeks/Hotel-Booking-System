@@ -39,8 +39,12 @@ def index():
 @login_required
 @customer_required
 def list_rooms():
-    room = Room.query.all()
-    return render_template('customers/book_room.html', room=room)
+    rooms = Room.query.all()
+    if not rooms:  # Check if the rooms list is empty
+        flash('Currently, there are no rooms available for booking.', 'info')
+        return redirect(url_for('customers.index'))
+    return render_template('customers/book_room.html', rooms=rooms)
+
 
 
 @customers.route('/book-room/<int:room_id>', methods=['GET', 'POST'])
@@ -117,6 +121,15 @@ def search_rooms():
     rooms = query.all()
 
     return render_template('customers/index.html', rooms=rooms)
+
+@customers.route('/view-all-bookings')
+@login_required
+@customer_required
+def view_all_bookings():
+    # logic to fetch and return all bookings for the user
+    bookings = Booking.query.filter_by(user_id=current_user.id).all()
+    return render_template('customers/view_all_bookings.html', bookings=bookings)
+
 
 
 @customers.route('/dashboard')

@@ -42,9 +42,6 @@ def login():
 
     return render_template('customers/login.html')
 
-
-
-
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -52,21 +49,36 @@ def register():
 
     if request.method == 'POST':
         try:
+            username = request.form.get('username', default=None)
             email = request.form.get('email', default=None)
             password = request.form.get('password', default=None)
+            confirm_password = request.form.get('confirm_password', default=None)
             
-            if not email or not password:
-                raise ValueError('Both email and password are required!')
+            # Check if all necessary fields are provided
+            if not username or not email or not password or not confirm_password:
+                raise ValueError('All fields (Username, Email, Password, and Confirm Password) are required!')
 
+            # Check if the provided passwords match
+            if password != confirm_password:
+                raise ValueError('Password and Confirm Password do not match.')
+
+            # Check if the provided email is already registered
             if User.query.filter_by(email=email).first():
-                raise ValueError('Email address already registered')
+                raise ValueError('Email address already registered.')
 
-            user = User(email=email)
+            # Check if the provided username is already taken
+            if User.query.filter_by(username=username).first():
+                raise ValueError('Username already taken.')
+
+            # Create a new User instance and set the password
+            user = User(username=username, email=email)
             user.set_password(password)
 
+            # Add the user to the database session and commit the transaction
             db.session.add(user)
             db.session.commit()
 
+            # Log in the user and redirect to the customers index page
             login_user(user)
             flash('Registration successful. Welcome!', 'success')
             return redirect(url_for('customers.index'))
@@ -74,7 +86,7 @@ def register():
             flash(str(e), 'danger')
             return redirect(url_for('auth.register'))
         except Exception as e:
-            db.session.rollback()
+            db.session.rollback()  # Roll back the session in case of unexpected errors
             flash('Error registering the user. Please try again.', 'danger')
 
     return render_template('customers/register.html')

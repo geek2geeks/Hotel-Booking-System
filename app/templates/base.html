@@ -1,14 +1,12 @@
-<!-- app\templates\base.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hotel Reservation System</title>
+    <title>Hotel Geek - Hotel Reservation System</title>
 
-    <!-- Keeping the Bootstrap and jQuery UI CDN links -->
+    <!-- Bootstrap and jQuery UI CDN links -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </head>
@@ -17,32 +15,32 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="{{ url_for('customers.index') }}">Hotel Geek</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" role="button">
+            <span class="navbar-toggler-icon" alt="Menu"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('customers.index') }}">Rooms</a>
+                    <a class="nav-link" href="{{ url_for('customers.index') }}" role="link">Rooms</a>
                 </li>
                 {% if current_user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('user.dashboard') }}">Dashboard</a>
+                        <a class="nav-link" href="{{ url_for('customers.dashboard') }}" role="link">Dashboard</a>
                     </li>
                     {% if current_user.is_admin %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin.add_room') }}">Add Room</a>
+                            <a class="nav-link" href="{{ url_for('admin.add_room') }}" role="link">Add Room</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}" role="link">Logout</a>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="nav-link" href="{{ url_for('auth.login') }}" role="link">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                        <a class="nav-link" href="{{ url_for('auth.register') }}" role="link">Register</a>
                     </li>
                 {% endif %}
             </ul>
@@ -53,7 +51,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
+                    <div class="alert alert-{{ category }}" role="alert">
                         {{ message }}
                     </div>
                 {% endfor %}
@@ -72,7 +70,7 @@
         </div>
     </footer>
 
-    <!-- Keeping the Bootstrap, jQuery, and other library CDN links -->
+    <!-- Bootstrap, jQuery, and other library CDN links -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
@@ -83,4 +81,5 @@
 </body>
 
 </html>
+
 

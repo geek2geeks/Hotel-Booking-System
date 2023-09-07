@@ -7,6 +7,6 @@
 {% for booking in bookings %}
     <p>Booking ID: {{ booking.id }} for room {{ booking.room_name }} on {{ booking.date }}.</p>
 {% endfor %}
-<a href="/new-booking" class="btn btn-primary">Book a New Room</a>
+<a href="{{ url_for('customers.book_room') }}" class="btn btn-primary">Book a New Room</a>
 <a href="{{ url_for('customers.view_all_bookings') }}" class="btn btn-secondary">View All Bookings</a>
 {% endblock %}
