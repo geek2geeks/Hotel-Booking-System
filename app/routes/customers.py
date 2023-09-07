@@ -46,7 +46,6 @@ def list_rooms():
     return render_template('customers/book_room.html', rooms=rooms)
 
 
-
 @customers.route('/book-room/<int:room_id>', methods=['GET', 'POST'])
 @login_required
 @customer_required
@@ -130,11 +129,10 @@ def view_all_bookings():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()
     return render_template('customers/view_all_bookings.html', bookings=bookings)
 
-
-
 @customers.route('/dashboard')
 @login_required
 @customer_required
 def dashboard():
     bookings = Booking.query.filter_by(user_id=current_user.id).all()
     return render_template('customers/user_dashboard.html', bookings=bookings)
+
