@@ -45,8 +45,9 @@
 {% block scripts %}
 <script>
     $(function() {
-        $("#start_date").datepicker();
-        $("#end_date").datepicker();
+        $("#start_date").datepicker({ dateFormat: 'yy-mm-dd' }); // set format to match DATE_FORMAT
+        $("#end_date").datepicker({ dateFormat: 'yy-mm-dd' }); // set format to match DATE_FORMAT
     });
 </script>
 {% endblock %}
+

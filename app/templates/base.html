@@ -24,12 +24,16 @@
                     <a class="nav-link" href="{{ url_for('customers.index') }}" role="link">Rooms</a>
                 </li>
                 {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('customers.dashboard') }}" role="link">Dashboard</a>
-                    </li>
                     {% if current_user.is_admin %}
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.admin_dashboard') }}" role="link">Admin Dashboard</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('admin.add_room') }}" role="link">Add Room</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('customers.dashboard') }}" role="link">Dashboard</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
@@ -46,6 +50,7 @@
             </ul>
         </div>
     </nav>
+    
 
     <div class="container mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}

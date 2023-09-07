@@ -2,7 +2,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import User
 from flask_login import login_user, logout_user, current_user, login_required
-from werkzeug.exceptions import BadRequestKeyError
 from app.extensions import db
 
 auth = Blueprint('auth', __name__)
@@ -27,7 +26,6 @@ def login():
                     return redirect(url_for('admin.admin_dashboard'))
                 else:
                     next_page = request.args.get('next')
-                    # Check if non-admin user is trying to access an admin-only route
                     if next_page and "/admin/" not in next_page:
                         return redirect(next_page)
                     return redirect(url_for('customers.index'))
@@ -36,7 +34,6 @@ def login():
         except ValueError as ve:
             flash(str(ve), 'danger')
         except Exception as e:
-            # Log the error for developer reference
             print("Error during login:", str(e))
             flash('An unexpected error occurred. Please try again.', 'danger')
 
@@ -47,6 +44,9 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('customers.index'))
 
+    # Check if any admin users exist
+    no_admins = not User.query.filter_by(is_admin=True).first()
+
     if request.method == 'POST':
         try:
             username = request.form.get('username', default=None)
@@ -54,31 +54,33 @@ def register():
             password = request.form.get('password', default=None)
             confirm_password = request.form.get('confirm_password', default=None)
             
-            # Check if all necessary fields are provided
+            # Check if all fields are provided
             if not username or not email or not password or not confirm_password:
                 raise ValueError('All fields (Username, Email, Password, and Confirm Password) are required!')
 
-            # Check if the provided passwords match
+            # Password match check
             if password != confirm_password:
                 raise ValueError('Password and Confirm Password do not match.')
 
-            # Check if the provided email is already registered
+            # Email and username uniqueness checks
             if User.query.filter_by(email=email).first():
                 raise ValueError('Email address already registered.')
-
-            # Check if the provided username is already taken
             if User.query.filter_by(username=username).first():
                 raise ValueError('Username already taken.')
 
-            # Create a new User instance and set the password
+            # Create the new User instance
             user = User(username=username, email=email)
             user.set_password(password)
 
-            # Add the user to the database session and commit the transaction
+            # If no admins and the checkbox is checked, make this user an admin
+            if no_admins and request.form.get('register_as_admin'):
+                user.is_admin = True
+
+            # Add to db and commit
             db.session.add(user)
             db.session.commit()
 
-            # Log in the user and redirect to the customers index page
+            # Log them in and redirect
             login_user(user)
             flash('Registration successful. Welcome!', 'success')
             return redirect(url_for('customers.index'))
@@ -86,12 +88,12 @@ def register():
             flash(str(e), 'danger')
             return redirect(url_for('auth.register'))
         except Exception as e:
-            db.session.rollback()  # Roll back the session in case of unexpected errors
+            db.session.rollback()  # Roll back any failed database transactions
             flash('Error registering the user. Please try again.', 'danger')
 
-    return render_template('customers/register.html')
+    # Pass the no_admins flag to the template to control the display of the admin registration option
+    return render_template('customers/register.html', no_admins=no_admins)
 
-# Route to log out the user
 @auth.route('/logout')
 @login_required
 def logout():

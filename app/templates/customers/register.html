@@ -20,6 +20,15 @@
         <label for="confirm_password">Confirm Password:</label>
         <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
     </div>
+
+    <!-- Add "Register as Admin" checkbox if no admins exist -->
+    {% if no_admins %}
+    <div class="form-check mb-3">
+        <input type="checkbox" class="form-check-input" id="register_as_admin" name="register_as_admin">
+        <label class="form-check-label" for="register_as_admin">Register as Admin</label>
+    </div>
+    {% endif %}
+
     <button type="submit" class="btn btn-primary">Register</button>
 </form>
 {% endblock %}
