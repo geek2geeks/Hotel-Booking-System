@@ -1,0 +1,69 @@
+<!-- app\templates\admin\room_form.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    {% if not room %}
+        <h2>Add a New Room</h2>
+    {% else %}
+        <h2>Edit Room</h2>
+    {% endif %}
+
+    <form action="{{ url_for('admin.room_form', room_id=room.id if room else None) }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="roomNumber">Room Number:</label>
+            <input type="text" class="form-control" id="roomNumber" name="room_number" value="{{ room.room_number if room else '' }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="roomType">Room Type:</label>
+            <select class="form-control" id="roomType" name="room_type" required>
+                <option value="SINGLE" {% if room and room.type == 'SINGLE' %}selected{% endif %}>SINGLE</option>
+                <option value="DOUBLE" {% if room and room.type == 'DOUBLE' %}selected{% endif %}>DOUBLE</option>
+                <!-- ... You can add more room types as options here ... -->
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="roomPrice">Room Price:</label>
+            <input type="number" class="form-control" id="roomPrice" name="room_price" value="{{ room.price if room else '' }}" required>
+        </div>
+
+        {% if room %}
+        <div class="form-group">
+            <label for="roomDescription">Room Description:</label>
+            <textarea class="form-control" id="roomDescription" name="description" rows="3">{{ room.description }}</textarea>
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label>Amenities:</label><br>
+            {% for amenity in all_amenities %}
+                <input type="checkbox" id="{{ amenity.name }}" name="amenities" value="{{ amenity.id }}" 
+                {% if room and amenity in room.amenities %}checked{% endif %}>
+                <label for="{{ amenity.name }}">{{ amenity.name }}</label><br>
+            {% endfor %}
+        </div>
+
+        <!-- Input for uploading photos -->
+        <div class="form-group">
+            <label for="photos">Room Photos:</label>
+            <input type="file" class="form-control" id="photos" name="photos" multiple>
+        </div>
+
+        {% if room %}
+        <div class="form-group">
+            <label>Current Photos:</label>
+            <div class="row">
+                {% for photo in room.photos %}
+                <div class="col-md-3" id="photo-{{ photo.id }}">
+                    <img src="{{ url_for('static', filename=photo.path) }}" alt="Room Photo" class="img-fluid">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">{% if not room %}Add Room{% else %}Save Changes{% endif %}</button>
+    </form>
+{% endblock %}

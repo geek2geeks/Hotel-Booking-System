@@ -1,29 +1,45 @@
 <!-- app\templates\admin\manage_users.html -->
 
 {% extends "base.html" %}
+
 {% block content %}
 <h2>Manage Users</h2>
+
+<!-- Search and Filter Options -->
+<form method="get">
+    <input type="text" name="search" placeholder="Search by username or email">
+    <select name="filter">
+        <option value="">All Users</option>
+        <option value="admin">Admins Only</option>
+        <option value="active">Active Users Only</option>
+    </select>
+    <input type="submit" value="Filter/Search">
+</form>
+
 <table>
-    <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Admin</th>
-        <th>Actions</th>
-    </tr>
-    {% for user in users %}
-    <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.is_admin }}</td>
-        <td>
-            <a href="{{ url_for('admin.user_detail', user_id=user.id) }}">Details</a>
-            <form method="post" action="{{ url_for('admin.delete_user', user_id=user.id) }}">
-                <input type="submit" value="Delete">
-            </form>
-        </td>
-    </tr>
-    {% endfor %}
+    ...
 </table>
+
+<!-- Bulk Actions -->
+<form method="post" action="{{ url_for('admin.bulk_delete') }}" onsubmit="return confirm('Are you sure you want to delete selected users?');">
+    <input type="submit" value="Delete Selected">
+</form>
+
+<script>
+    document.getElementById('selectAll').addEventListener('click', function(event) {
+        var checkboxes = document.querySelectorAll('input[name="user_ids"]');
+        for (var checkbox of checkboxes) {
+            checkbox.checked = event.target.checked;
+        }
+    });
+</script>
+
+{% if user %}
+<div class="container">
+    <h2>User Details for {{ user.username }}</h2>
+    ...
+</div>
+{% endif %}
+
 {% endblock %}
+

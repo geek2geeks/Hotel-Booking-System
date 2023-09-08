@@ -1,5 +1,4 @@
 <!-- app\templates\admin\admin_dashboard.html -->
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -8,9 +7,9 @@
     <a href="{{ url_for('admin.add_room') }}" class="list-group-item list-group-item-action">Add New Room</a>
     <a href="{{ url_for('admin.list_rooms_for_admin') }}" class="list-group-item list-group-item-action">List All Rooms</a>
     <a href="/admin/manage_users" class="list-group-item list-group-item-action">Manage Users</a>
-    <a href="{{ url_for('admin.edit_room') }}" class="list-group-item list-group-item-action">Edit Room</a>
     <a href="{{ url_for('admin.user_detail') }}" class="list-group-item list-group-item-action">View User Details</a>
     <a href="{{ url_for('admin.view_room') }}" class="list-group-item list-group-item-action">View Room</a>
     <a href="{{ url_for('admin.view_room_bookings') }}" class="list-group-item list-group-item-action">View Room Bookings</a>
 </div>
 {% endblock %}
+
