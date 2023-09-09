@@ -74,7 +74,7 @@ def admin_dashboard():
 @admin_required
 def list_rooms_for_admin():
     rooms = Room.query.all()
-    return render_template('admin/all_rooms.html', rooms=rooms)
+    return render_template('admin/manage_rooms.html', rooms=rooms)
 
 # Route to manage all users.
 @admin.route('/manage-users')
@@ -93,7 +93,7 @@ def view_room(room_id):
     if not room:
         flash('Room not found.', 'danger')
         return redirect(url_for('admin.admin_dashboard'))
-    return render_template('admin/view_room.html', room=room)
+    return render_template('admin/manage_rooms.html', room=room)
 
 # Route to view and edit details of a specific user.
 @admin.route('/user/<int:user_id>', methods=['GET', 'POST'])
@@ -110,7 +110,7 @@ def user_detail(user_id):
         db.session.commit()
         flash('User details updated!', 'success')
         return redirect(url_for('admin.user_detail', user_id=user_id))
-    return render_template('admin/user_detail.html', user=user)
+    return render_template('admin/manage_users.html', user=user)
 
 # Route to delete a specific user.
 @admin.route('/delete-user/<int:user_id>', methods=['POST'])
@@ -133,6 +133,9 @@ def delete_user(user_id):
 @admin_required
 def room_form(room_id):
     room = Room.query.get(room_id) if room_id else None
+    
+    # Fetch all available amenities
+    all_amenities = Amenity.query.all()
 
     if request.method == 'POST':
         if not room:
@@ -164,6 +167,7 @@ def room_form(room_id):
         flash(f"Room {'edited' if room_id else 'added'} successfully!", 'success')
         return redirect(url_for('admin.admin_dashboard'))
 
-    return render_template('admin/room_form.html', room=room)
+    return render_template('admin/room_form.html', room=room, amenities=all_amenities)
+
 
 

@@ -1,80 +1,55 @@
-<!-- app\templates\admin\room_form.html -->
+<!-- app/templates/admin/room_form.html -->
 
 {% extends "base.html" %}
 
 {% block content %}
-    <!-- Display heading based on whether we're adding or editing a room -->
-    {% if not room %}
-        <h2>Add a New Room</h2>
-    {% else %}
-        <h2>Edit Room</h2>
-    {% endif %}
-
-    <!-- Form for adding or editing room information -->
-    <form action="{{ url_for('admin.room_form', room_id=room.id if room else None) }}" method="post" enctype="multipart/form-data">
-        
-        <!-- Input for Room Number -->
-        <div class="form-group">
-            <label for="roomNumber">Room Number:</label>
-            <input type="text" class="form-control" id="roomNumber" name="room_number" value="{{ room.room_number if room else '' }}" required>
+<div class="container mt-5">
+    <h2 class="mb-4">{% if room %}Edit Room {% else %}Add New Room{% endif %}</h2>
+    <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="room_number" class="form-label">Room Number</label>
+            <input type="text" class="form-control" id="room_number" name="room_number" value="{{ room.room_number if room }}" required>
         </div>
-        
-        <!-- Dropdown for Room Type -->
-        <div class="form-group">
-            <label for="roomType">Room Type:</label>
-            <select class="form-control" id="roomType" name="room_type" required>
-                <option value="SINGLE" {% if room and room.type == 'SINGLE' %}selected{% endif %}>SINGLE</option>
-                <option value="DOUBLE" {% if room and room.type == 'DOUBLE' %}selected{% endif %}>DOUBLE</option>
-                <!-- Add more room types as options if needed -->
+
+        <div class="mb-3">
+            <label for="room_type" class="form-label">Room Type</label>
+            <select class="form-control" id="room_type" name="room_type" required>
+                <option value="SINGLE" {% if room and room.type == "SINGLE" %} selected {% endif %}>Single</option>
+                <option value="DOUBLE" {% if room and room.type == "DOUBLE" %} selected {% endif %}>Double</option>
             </select>
         </div>
 
-        <!-- Input for Room Price -->
-        <div class="form-group">
-            <label for="roomPrice">Room Price:</label>
-            <input type="number" class="form-control" id="roomPrice" name="room_price" value="{{ room.price if room else '' }}" required>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{{ room.description if room }}</textarea>
         </div>
 
-        <!-- Input for Room Description (only for editing room) -->
-        {% if room %}
-        <div class="form-group">
-            <label for="roomDescription">Room Description:</label>
-            <textarea class="form-control" id="roomDescription" name="description" rows="3">{{ room.description }}</textarea>
-        </div>
-        {% endif %}
-
-        <!-- Checkbox options for selecting Room Amenities -->
-        <div class="form-group">
-            <label>Amenities:</label><br>
-            {% for amenity in all_amenities %}
-                <input type="checkbox" id="{{ amenity.name }}" name="amenities" value="{{ amenity.id }}" 
-                {% if room and amenity in room.amenities %}checked{% endif %}>
-                <label for="{{ amenity.name }}">{{ amenity.name }}</label><br>
-            {% endfor %}
+        <div class="mb-3">
+            <label for="room_price" class="form-label">Room Price (Per Night)</label>
+            <input type="number" class="form-control" id="room_price" name="room_price" value="{{ room.price if room }}" required>
         </div>
 
-        <!-- File input for uploading multiple room photos -->
-        <div class="form-group">
-            <label for="photos">Room Photos:</label>
-            <input type="file" class="form-control" id="photos" name="photos" multiple>
-        </div>
-
-        <!-- Display current photos if editing room -->
-        {% if room %}
-        <div class="form-group">
-            <label>Current Photos:</label>
-            <div class="row">
-                {% for photo in room.photos %}
-                <div class="col-md-3" id="photo-{{ photo.id }}">
-                    <img src="{{ url_for('static', filename=photo.path) }}" alt="Room Photo" class="img-fluid">
-                </div>
+        <div class="mb-3">
+            <label class="form-label">Amenities</label>
+            <div>
+                {% for amenity in amenities %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="amenities" id="amenity-{{ amenity.id }}" value="{{ amenity.id }}" {% if amenity in room.amenities %}checked{% endif %}>
+                        <label class="form-check-label" for="amenity-{{ amenity.id }}">{{ amenity.name }}</label>
+                    </div>
                 {% endfor %}
             </div>
         </div>
-        {% endif %}
 
-        <!-- Button for submitting the form -->
-        <button type="submit" class="btn btn-primary">{% if not room %}Add Room{% else %}Save Changes{% endif %}</button>
+        <div class="mb-3">
+            <label for="photos" class="form-label">Room Photos</label>
+            <input type="file" class="form-control" id="photos" name="photos" multiple>
+        </div>
+
+        <button type="submit" class="btn btn-primary">{% if room %}Update Room{% else %}Add Room{% endif %}</button>
     </form>
+</div>
 {% endblock %}
+
+
 

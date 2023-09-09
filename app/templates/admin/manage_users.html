@@ -1,45 +1,51 @@
-<!-- app\templates\admin\manage_users.html -->
+<!-- app/templates/admin/manage_users.html -->
 
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Manage Users</h2>
+<div class="container mt-5">
+    <h2 class="text-center">Manage Users</h2>
+    <br>
 
-<!-- Search and Filter Options -->
-<form method="get">
-    <input type="text" name="search" placeholder="Search by username or email">
-    <select name="filter">
-        <option value="">All Users</option>
-        <option value="admin">Admins Only</option>
-        <option value="active">Active Users Only</option>
-    </select>
-    <input type="submit" value="Filter/Search">
-</form>
-
-<table>
-    ...
-</table>
-
-<!-- Bulk Actions -->
-<form method="post" action="{{ url_for('admin.bulk_delete') }}" onsubmit="return confirm('Are you sure you want to delete selected users?');">
-    <input type="submit" value="Delete Selected">
-</form>
-
-<script>
-    document.getElementById('selectAll').addEventListener('click', function(event) {
-        var checkboxes = document.querySelectorAll('input[name="user_ids"]');
-        for (var checkbox of checkboxes) {
-            checkbox.checked = event.target.checked;
-        }
-    });
-</script>
-
-{% if user %}
-<div class="container">
-    <h2>User Details for {{ user.username }}</h2>
-    ...
+    <!-- Display flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Table for listing all users -->
+    <form action="{{ url_for('admin.bulk_delete_users') }}" method="post">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Admin</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <th scope="row"><input type="checkbox" name="user_ids" value="{{ user.id }}"></th>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.first_name }} {{ user.last_name }}</td>
+                        <td>{{ "Yes" if user.is_admin else "No" }}</td>
+                        <td>
+                            <a href="{{ url_for('admin.user_detail', user_id=user.id) }}" class="btn btn-info btn-sm">Edit</a>
+                            <button type="submit" formaction="{{ url_for('admin.delete_user', user_id=user.id) }}" class="btn btn-danger btn-sm">Delete</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-danger mb-5">Bulk Delete</button>
+    </form>
 </div>
-{% endif %}
-
 {% endblock %}
-

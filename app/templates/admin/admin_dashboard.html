@@ -1,13 +1,53 @@
 <!-- app\templates\admin\admin_dashboard.html -->
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+{% block title %}
+Admin Dashboard
+{% endblock %}
 
 {% block content %}
-<h2>Admin Dashboard</h2>
-<div class="list-group">
-    <a href="{{ url_for('admin.room_form') }}" class="list-group-item list-group-item-action">Add New Room</a>
-    <a href="{{ url_for('admin.list_rooms_for_admin') }}" class="list-group-item list-group-item-action">List All Rooms</a>
-    <!-- Replaced the direct link with url_for -->
-    <a href="{{ url_for('admin.manage_users') }}" class="list-group-item list-group-item-action">Manage Users</a>
-    <a href="{{ url_for('admin.view_room_bookings') }}" class="list-group-item list-group-item-action">View Room Bookings</a>
+<div class="container mt-4">
+    <h2>Welcome to the Admin Dashboard</h2>
+    <p>Hello, {{ current_user.username }}!</p>
+    <hr>
+
+    <!-- Dashboard Statistics -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Total Users</div>
+                <div class="card-body">{{ users_count }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Total Rooms</div>
+                <div class="card-body">{{ rooms_count }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">Total Bookings</div>
+                <div class="card-body">{{ bookings_count }}</div>
+            </div>
+        </div>
+    </div>
+    <hr>
+
+    <!-- Navigation Options -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a href="{{ url_for('admin.list_rooms_for_admin') }}" class="btn btn-primary btn-block">Manage Rooms</a>
+        </div>
+        <div class="col-md-6">
+            <a href="{{ url_for('admin.manage_users') }}" class="btn btn-secondary btn-block">Manage Users</a>
+        </div>
+    </div>
+    
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-danger btn-block">Logout</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

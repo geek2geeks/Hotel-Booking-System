@@ -1,84 +1,35 @@
 <!-- app\templates\admin\manage_rooms.html -->
 
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-
-<h1>Manage Rooms</h1>
-
-<!-- List of Rooms with details -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>Room ID</th>
-            <th>Room Number</th>
-            <th>Type</th>
-            <th>Price</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for room in rooms %}
-        <tr>
-            <td>{{ room.id }}</td>
-            <td>{{ room.room_number }}</td>
-            <td>{{ room.type.value }}</td>
-            <td>{{ room.price }}</td>
-            <td>{{ room.description }}</td>
-            <td>{{ room.status }}</td>
-            <td>
-                <a href="{{ url_for('admin.view_room', room_id=room.id) }}" class="btn btn-info">View</a>
-                <a href="{{ url_for('admin.edit_room', room_id=room.id) }}" class="btn btn-primary">Edit</a>
-                <a href="{{ url_for('admin.delete_room', room_id=room.id) }}" class="btn btn-danger">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- View a selected room's bookings -->
-<h2>Bookings for Room {{ room.room_number }}</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Booking ID</th>
-            <th>User</th>
-            <th>Check-In Date</th>
-            <th>Check-Out Date</th>
-            <th>Status</th>
-            <th>Total Price</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for booking in room.bookings %}
-        <tr>
-            <td>{{ booking.id }}</td>
-            <td>{{ booking.user.username }} ({{ booking.user.email }})</td>
-            <td>{{ booking.start_date }}</td>
-            <td>{{ booking.end_date }}</td>
-            <td>{{ booking.status.value }}</td>
-            <td>{{ booking.total_price }}</td>
-            <td>
-                <form action="{{ url_for('admin.delete_booking', booking_id=booking.id) }}" method="POST">
-                    <button class="btn btn-danger" type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- Form to add or edit a room -->
-<h2>{{ "Edit Room" if room else "Add Room" }}</h2>
-<form action="{{ url_for('admin.save_room') }}" method="post">
-    <!-- Room details inputs. Make sure to add form fields like room_number, type, price, description etc. -->
-    <!-- You can use room.room_number, room.type etc. to populate these fields if room is provided -->
-    <input type="submit" value="{{ "Save Changes" if room else "Add Room" }}" class="btn btn-success">
-</form>
-
-<a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-
+    <h1>Manage Rooms</h1>
+    <a href="{{ url_for('admin.add_room') }}" class="btn btn-primary mb-3">Add New Room</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Room Number</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for room in rooms %}
+                <tr>
+                    <td>{{ room.room_number }}</td>
+                    <td>{{ room.type }}</td>
+                    <td>{{ room.price }}</td>
+                    <td>{{ room.status }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.edit_room', room_id=room.id) }}" class="btn btn-warning">Edit</a>
+                        <a href="{{ url_for('admin.delete_room', room_id=room.id) }}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
+
+
