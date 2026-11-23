@@ -11,12 +11,26 @@ def create_app():
     # Initialize Flask app with template and static paths
     app = Flask(__name__, template_folder=template_path)
 
-    # Application secret key for sessions and cookies
-    app.config['SECRET_KEY'] = 'As!101010'
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-    # Load configuration from instance folder
-    # File location: Hotel-Booking-System/instance/config.py
-    app.config.from_object('instance.config.DevConfig')  
+    # Optional local overrides: <repo>/instance/config.py (untracked, see .gitignore).
+    try:
+        app.config.from_object('instance.config.DevConfig')
+    except (ImportError, AttributeError):
+        pass
+
+    # Environment-first configuration; the fallback keeps a fresh clone usable.
+    app.config['SECRET_KEY'] = (
+        os.environ.get('SECRET_KEY')
+        or app.config.get('SECRET_KEY')
+        or 'dev-only-insecure-key'
+    )
+    default_db_uri = 'sqlite:///' + os.path.join(base_dir, 'site.db').replace(os.sep, '/')
+    app.config['SQLALCHEMY_DATABASE_URI'] = (
+        os.environ.get('DATABASE_URL')
+        or app.config.get('SQLALCHEMY_DATABASE_URI')
+        or default_db_uri
+    )
     
     # Bind app with Flask extensions
     # File location: Hotel-Booking-System/app/extensions.py
